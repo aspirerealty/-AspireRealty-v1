@@ -1,30 +1,34 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, OrbitControls, RoundedBox, useCursor } from "@react-three/drei";
+import { ContactShadows, Environment, OrbitControls, RoundedBox, useCursor, useGLTF, useTexture } from "@react-three/drei";
 import { EffectComposer, N8AO } from "@react-three/postprocessing";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { FlatLayout, Room, RoomType } from "@/data/flat-layouts";
 
-// Diorama "dollhouse" view of an apartment sitting on a grass-and-earth base:
-// pastel floors, rounded cut-away walls with door openings, soft furniture
-// and architectural annotation labels. Selecting a room flies the camera in.
+// Architectural cut-away of a furnished apartment, aiming for an arch-viz
+// "render" look: real PBR textures and CC0 furniture models from Poly Haven,
+// image-based lighting from a real interior HDRI, warm sunlight with soft
+// shadows, ambient occlusion and dark wall cut-tops. Selecting a room flies
+// the camera in.
 
-const WALL_H = 1.5; // cut-away height so every room is visible from above
+const WALL_H = 1.8; // walls are cut at 1.8 m so every room is visible
 const WALL_T = 0.14;
+const SILL_H = 0.9;
+const BASE = "/assets/3d";
 
-const FLOOR_COLORS: Record<RoomType, string> = {
-  living: "#e8cfa6",
-  bedroom: "#dcb88f",
-  kitchen: "#eef0f2",
-  wet: "#dfe7ef",
-  balcony: "#cdd5dd",
-  passage: "#ecdcc0",
+const MODELS = {
+  armChair: `${BASE}/models/modern_arm_chair_01.glb`,
+  coffeeTable: `${BASE}/models/modern_coffee_table_01.glb`,
+  sideTable: `${BASE}/models/side_table_01.glb`,
+  diningChair: `${BASE}/models/dining_chair_02.glb`,
+  plant: `${BASE}/models/potted_plant_02.glb`,
+  succulent: `${BASE}/models/potted_plant_04.glb`,
+  outdoorSet: `${BASE}/models/outdoor_table_chair_set_01.glb`,
+  mediaConsole: `${BASE}/models/modern_wooden_cabinet.glb`,
 };
-const BASE_H = 0.8;
-const MARGIN = 1.1;
 
 type Props = {
   layout: FlatLayout;
@@ -38,7 +42,7 @@ export default function FlatScene({ layout, active, selected, onSelect }: Props)
     const xs = layout.rooms.flatMap((r) => [r.x, r.x + r.w]);
     const zs = layout.rooms.flatMap((r) => [r.z, r.z + r.d]);
     const minX = Math.min(...xs), maxX = Math.max(...xs), minZ = Math.min(...zs), maxZ = Math.max(...zs);
-    return { cx: (minX + maxX) / 2, cz: (minZ + maxZ) / 2, w: maxX - minX, d: maxZ - minZ, size: Math.max(maxX - minX, maxZ - minZ) };
+    return { cx: (minX + maxX) / 2, cz: (minZ + maxZ) / 2, w: maxX - minX, d: maxZ - minZ };
   }, [layout]);
 
   // Room labels are plain DOM buttons laid over the canvas and moved every
@@ -47,53 +51,51 @@ export default function FlatScene({ layout, active, selected, onSelect }: Props)
   const touch = useMemo(() => window.matchMedia("(pointer: coarse)").matches, []);
 
   return (
-    <div className="absolute inset-0">
-      <Canvas frameloop={active ? "always" : "never"} dpr={[1, 1.75]} shadows="soft" camera={{ position: [6, 11, 12], fov: 40 }} gl={{ antialias: false }}>
-        <color attach="background" args={["#e4e9f0"]} />
-        <hemisphereLight args={["#ffffff", "#bcc6d6", 1.3]} />
-        <directionalLight
-          position={[7, 14, 6]}
-          intensity={1.9}
-          castShadow
-          shadow-mapSize={[2048, 2048]}
-          shadow-bias={-0.0004}
-          shadow-normalBias={0.02}
-          shadow-camera-left={-10}
-          shadow-camera-right={10}
-          shadow-camera-top={10}
-          shadow-camera-bottom={-10}
-        />
-        <directionalLight position={[-8, 6, -6]} intensity={0.4} color="#d6e2ff" />
-        <DioramaBase w={bounds.w + MARGIN * 2} d={bounds.d + MARGIN * 2} />
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,#f4f1ec,#d9d4cc)]">
+      <Canvas
+        frameloop={active ? "always" : "never"}
+        dpr={touch ? [1, 1.5] : [1, 2]}
+        shadows="soft"
+        camera={{ position: [6.5, 10, -11.5], fov: 36 }}
+        gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.95, alpha: true }}
+      >
+        <Suspense fallback={null}>
+          <Environment files={`${BASE}/hdri/white_home_studio_1k.hdr`} environmentIntensity={0.5} />
+          <hemisphereLight args={["#ffffff", "#d8d2c8", 0.2]} />
+          {/* Warm late-afternoon sun coming in from the balcony side */}
+          <directionalLight
+            position={[-7, 11, -9]}
+            intensity={1.7}
+            color="#ffe9cf"
+            castShadow
+            shadow-mapSize={touch ? [1024, 1024] : [2048, 2048]}
+            shadow-bias={-0.0003}
+            shadow-normalBias={0.02}
+            shadow-radius={6}
+            shadow-camera-left={-9}
+            shadow-camera-right={9}
+            shadow-camera-top={9}
+            shadow-camera-bottom={-9}
+          />
 
-        {/* Centre the plan at the origin */}
-        <group position={[-bounds.cx, 0, -bounds.cz]}>
-          {layout.rooms.map((room) => (
-            <RoomFloor key={room.id} room={room} selected={selected === room.id} onSelect={onSelect} />
-          ))}
-          <Walls layout={layout} />
-          {layout.furniture.map((f, i) => (
-            <RoundedBox
-              key={i}
-              args={[f.w, f.h, f.d]}
-              radius={Math.min(0.07, Math.min(f.w, f.h, f.d) / 2 - 0.01)}
-              smoothness={3}
-              position={[f.x + f.w / 2, f.h / 2 + 0.05, f.z + f.d / 2]}
-              castShadow
-              receiveShadow
-            >
-              <meshStandardMaterial color={f.color} roughness={0.7} />
-            </RoundedBox>
-          ))}
-        </group>
+          <group position={[-bounds.cx, 0, -bounds.cz]}>
+            <Slab bounds={bounds} />
+            {layout.rooms.map((room) => (
+              <RoomFloor key={room.id} room={room} selected={selected === room.id} onSelect={onSelect} />
+            ))}
+            <Walls layout={layout} />
+            <Furnishings />
+          </group>
 
-        <ContactShadows position={[0, -BASE_H - 0.02, 0]} opacity={0.4} scale={34} blur={2.6} far={6} color="#1d2b3f" />
-        <EffectComposer multisampling={touch ? 0 : 4}>
-          {touch ? <></> : <N8AO aoRadius={0.8} intensity={2} distanceFalloff={0.8} halfRes quality="medium" />}
-        </EffectComposer>
+          <ContactShadows position={[0, -0.32, 0]} opacity={0.35} scale={30} blur={2.8} far={5} color="#2a2420" />
+          <EffectComposer multisampling={touch ? 0 : 4}>
+            {touch ? <></> : <N8AO aoRadius={0.55} intensity={2.4} distanceFalloff={0.6} halfRes quality="high" />}
+          </EffectComposer>
+        </Suspense>
         <CameraRig layout={layout} bounds={bounds} selected={selected} />
         <LabelProjector layout={layout} bounds={bounds} labels={labels} />
       </Canvas>
+
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {layout.rooms.map((room, i) => (
           <button
@@ -107,7 +109,7 @@ export default function FlatScene({ layout, active, selected, onSelect }: Props)
             {/* Annotation: label on a short leader line down to a dot */}
             <span
               className={`whitespace-nowrap border-b px-1.5 pb-0.5 text-[10px] font-bold tracking-[0.18em] uppercase backdrop-blur-sm transition-colors ${
-                selected === room.id ? "border-gold-500 bg-gold-500 text-navy-950" : "border-navy-900/40 bg-white/70 text-navy-900 group-hover:bg-white"
+                selected === room.id ? "border-gold-500 bg-gold-500 text-navy-950" : "border-navy-900/40 bg-white/75 text-navy-900 group-hover:bg-white"
               }`}
             >
               {room.name}
@@ -120,6 +122,516 @@ export default function FlatScene({ layout, active, selected, onSelect }: Props)
     </div>
   );
 }
+
+/* ────────────────────────── materials ────────────────────────── */
+
+type TexSet = { map: THREE.Texture; normalMap: THREE.Texture; roughnessMap: THREE.Texture };
+
+function useTexSet(name: string): TexSet {
+  const [map, normalMap, roughnessMap] = useTexture([
+    `${BASE}/textures/${name}_diff.jpg`,
+    `${BASE}/textures/${name}_nor.jpg`,
+    `${BASE}/textures/${name}_rough.jpg`,
+  ]);
+  return useMemo(() => {
+    // Configure fresh clones rather than the cached originals.
+    const prep = (t: THREE.Texture, srgb: boolean) => {
+      const c = t.clone();
+      if (srgb) c.colorSpace = THREE.SRGBColorSpace;
+      c.wrapS = c.wrapT = THREE.RepeatWrapping;
+      c.anisotropy = 8;
+      c.needsUpdate = true;
+      return c;
+    };
+    return { map: prep(map, true), normalMap: prep(normalMap, false), roughnessMap: prep(roughnessMap, false) };
+  }, [map, normalMap, roughnessMap]);
+}
+
+// Clone a texture set with its own tiling (in metres per tile).
+function tiled(set: TexSet, w: number, d: number, tile: number): TexSet {
+  const clone = (t: THREE.Texture) => {
+    const c = t.clone();
+    c.repeat.set(w / tile, d / tile);
+    c.needsUpdate = true;
+    return c;
+  };
+  return { map: clone(set.map), normalMap: clone(set.normalMap), roughnessMap: clone(set.roughnessMap) };
+}
+
+const FLOOR_TEX: Record<RoomType, { name: string; tile: number }> = {
+  living: { name: "herringbone_parquet", tile: 1.6 },
+  bedroom: { name: "laminate_floor_02", tile: 2 },
+  kitchen: { name: "marble_tiles", tile: 1.2 },
+  passage: { name: "marble_tiles", tile: 1.2 },
+  wet: { name: "large_grey_tiles", tile: 1.2 },
+  balcony: { name: "wood_floor_deck", tile: 1.5 },
+};
+
+function useMaterials() {
+  const linen = useTexSet("rough_linen");
+  const velvet = useTexSet("velour_velvet");
+  const oak = useTexSet("white_oak_veneer");
+  const marble = useTexSet("marble_01");
+  const wool = useTexSet("poly_wool_herringbone");
+
+  return useMemo(() => {
+    const std = (p: THREE.MeshStandardMaterialParameters) => new THREE.MeshStandardMaterial(p);
+    // Fabric photos are themselves coloured (blue linen, red velvet), so use
+    // only their weave relief and set our own neutral colours.
+    const weave = (t: TexSet, scale = 1) => ({ normalMap: t.normalMap, roughnessMap: t.roughnessMap, normalScale: new THREE.Vector2(scale, scale) });
+    return {
+      sofa: std({ ...weave(linen, 0.8), color: "#bdb3a6", roughness: 1 }),
+      linenWhite: std({ ...weave(linen, 0.5), color: "#f2eee8", roughness: 1 }),
+      linenSand: std({ ...weave(linen, 0.6), color: "#d8c9b2", roughness: 1 }),
+      velvetTaupe: std({ ...weave(velvet, 0.6), color: "#8c7562", roughness: 0.85 }),
+      velvetSlate: std({ ...weave(velvet, 0.6), color: "#56606b", roughness: 0.85 }),
+      velvetOlive: std({ ...weave(velvet, 0.6), color: "#7a7650", roughness: 0.85 }),
+      oak: std({ ...oak, color: "#f3e6d4" }),
+      marble: std({ ...marble, color: "#ffffff", roughness: 0.25, envMapIntensity: 1.2 }),
+      rug: std({ ...weave(wool, 0.8), color: "#d9d0c1", roughness: 1 }),
+      lacquer: std({ color: "#f1efeb", roughness: 0.35 }),
+      steel: std({ color: "#c9ced3", metalness: 0.9, roughness: 0.28 }),
+      darkMetal: std({ color: "#25282c", metalness: 0.7, roughness: 0.4 }),
+      blackGlass: std({ color: "#0b0d10", metalness: 0.3, roughness: 0.08, envMapIntensity: 1.5 }),
+      ceramic: std({ color: "#fbfbfa", roughness: 0.12, envMapIntensity: 1.2 }),
+      mirror: std({ color: "#dfe7ee", metalness: 1, roughness: 0.03 }),
+      glass: std({ color: "#dcebf2", roughness: 0.04, transparent: true, opacity: 0.22, envMapIntensity: 1.6, depthWrite: false }),
+      plaster: std({ color: "#efedea", roughness: 0.95 }),
+      poche: std({ color: "#2b2f36", roughness: 0.8 }),
+    };
+  }, [linen, velvet, oak, marble, wool]);
+}
+
+type Mats = ReturnType<typeof useMaterials>;
+
+/* ────────────────────────── shell ────────────────────────── */
+
+function Slab({ bounds }: { bounds: { w: number; d: number; cx: number; cz: number } }) {
+  return (
+    <mesh position={[bounds.cx, -0.16, bounds.cz]} receiveShadow castShadow>
+      <boxGeometry args={[bounds.w + 0.5, 0.3, bounds.d + 0.5]} />
+      <meshStandardMaterial color="#d2cdc5" roughness={0.95} />
+    </mesh>
+  );
+}
+
+function RoomFloor({ room, selected, onSelect }: { room: Room; selected: boolean; onSelect: (id: string) => void }) {
+  const [hovered, setHovered] = useState(false);
+  useCursor(hovered);
+  const spec = FLOOR_TEX[room.type];
+  const set = useTexSet(spec.name);
+  const maps = useMemo(() => tiled(set, room.w, room.d, spec.tile), [set, room.w, room.d, spec.tile]);
+
+  return (
+    <mesh
+      position={[room.x + room.w / 2, 0.01, room.z + room.d / 2]}
+      rotation-x={-Math.PI / 2}
+      receiveShadow
+      onClick={(e) => {
+        e.stopPropagation();
+        onSelect(room.id);
+      }}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        setHovered(true);
+      }}
+      onPointerOut={() => setHovered(false)}
+    >
+      <planeGeometry args={[room.w, room.d]} />
+      <meshStandardMaterial
+        {...maps}
+        roughness={1}
+        emissive={selected ? "#c49a52" : "#ffffff"}
+        emissiveIntensity={selected ? 0.08 : hovered ? 0.05 : 0}
+      />
+    </mesh>
+  );
+}
+
+type Piece = [number, number, "wall" | "window"];
+
+// Each room draws its own four walls just inside its outline, so neighbouring
+// rooms' walls sit back to back. Doors cut a full-height gap; windows keep a
+// sill wall and get a glass pane.
+function Walls({ layout }: { layout: FlatLayout }) {
+  const mats = useMaterials();
+  const { solid, windows } = useMemo(() => {
+    const solid: { x: number; z: number; w: number; d: number; y0: number; y1: number }[] = [];
+    const windows: { x: number; z: number; w: number; d: number }[] = [];
+    const t = WALL_T / 2;
+
+    const cut = (axis: "x" | "z", line: number, from: number, to: number) => {
+      let pieces: Piece[] = [[from, to, "wall"]];
+      for (const o of layout.openings) {
+        if (o.axis !== axis || Math.abs(o.at - line) > 0.2) continue;
+        const a = o.center - o.width / 2;
+        const b = o.center + o.width / 2;
+        pieces = pieces.flatMap(([p, q, k]): Piece[] => {
+          if (k !== "wall" || b <= p || a >= q) return [[p, q, k]];
+          const keep: Piece[] = [];
+          if (a > p) keep.push([p, a, "wall"]);
+          if (o.kind === "window") keep.push([Math.max(a, p), Math.min(b, q), "window"]);
+          if (b < q) keep.push([b, q, "wall"]);
+          return keep;
+        });
+      }
+      return pieces.filter(([p, q]) => q - p > 0.02);
+    };
+
+    const add = (horizontal: boolean, line: number, offset: number, from: number, to: number) => {
+      for (const [p, q, kind] of cut(horizontal ? "x" : "z", line, from, to)) {
+        const c = (p + q) / 2;
+        const len = q - p;
+        const box = horizontal ? { x: c, z: offset, w: len, d: WALL_T / 2 } : { x: offset, z: c, w: WALL_T / 2, d: len };
+        if (kind === "wall") solid.push({ ...box, y0: 0, y1: WALL_H });
+        else {
+          solid.push({ ...box, y0: 0, y1: SILL_H });
+          windows.push(box);
+        }
+      }
+    };
+
+    for (const r of layout.rooms) {
+      if (r.type === "balcony") continue;
+      add(true, r.z, r.z + t, r.x, r.x + r.w);
+      add(true, r.z + r.d, r.z + r.d - t, r.x, r.x + r.w);
+      add(false, r.x, r.x + t, r.z + WALL_T / 2, r.z + r.d - WALL_T / 2);
+      add(false, r.x + r.w, r.x + r.w - t, r.z + WALL_T / 2, r.z + r.d - WALL_T / 2);
+    }
+    return { solid, windows };
+  }, [layout]);
+
+  const balcony = layout.rooms.find((r) => r.type === "balcony");
+
+  return (
+    <group>
+      {solid.map((s, i) => (
+        <group key={i}>
+          <mesh position={[s.x, (s.y0 + s.y1) / 2, s.z]} castShadow receiveShadow material={mats.plaster}>
+            <boxGeometry args={[s.w, s.y1 - s.y0, s.d]} />
+          </mesh>
+          {/* dark cut-top, as in architectural section renders */}
+          <mesh position={[s.x, s.y1 + 0.004, s.z]} material={mats.poche}>
+            <boxGeometry args={[s.w + 0.002, 0.008, s.d + 0.002]} />
+          </mesh>
+        </group>
+      ))}
+      {windows.map((wdw, i) => (
+        <group key={`w${i}`}>
+          <mesh position={[wdw.x, (SILL_H + WALL_H) / 2, wdw.z]} material={mats.glass}>
+            <boxGeometry args={[Math.max(wdw.w, 0.02), WALL_H - SILL_H, Math.max(wdw.d, 0.02)]} />
+          </mesh>
+          <mesh position={[wdw.x, SILL_H + 0.015, wdw.z]} material={mats.darkMetal} castShadow>
+            <boxGeometry args={[wdw.w + 0.02, 0.03, wdw.d + 0.06]} />
+          </mesh>
+        </group>
+      ))}
+      {balcony && <BalconyRail room={balcony} mats={mats} />}
+    </group>
+  );
+}
+
+function BalconyRail({ room, mats }: { room: Room; mats: Mats }) {
+  const h = 1.05;
+  const runs = [
+    { x: room.x + room.w / 2, z: room.z + 0.03, w: room.w, d: 0.02 },
+    { x: room.x + 0.03, z: room.z + room.d / 2, w: 0.02, d: room.d },
+    { x: room.x + room.w - 0.03, z: room.z + room.d / 2, w: 0.02, d: room.d },
+  ];
+  return (
+    <group>
+      {runs.map((r, i) => (
+        <group key={i}>
+          <mesh position={[r.x, h / 2, r.z]} material={mats.glass}>
+            <boxGeometry args={[r.w, h, r.d]} />
+          </mesh>
+          <mesh position={[r.x, h, r.z]} material={mats.steel} castShadow>
+            <boxGeometry args={[r.w + 0.03, 0.04, r.d + 0.04]} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
+}
+
+/* ────────────────────────── furniture ────────────────────────── */
+
+type V3 = [number, number, number];
+
+// Rounded box helper with a safe corner radius.
+function Bx({ size, pos, rot = 0, mat, r = 0.02 }: { size: V3; pos: V3; rot?: number; mat: THREE.Material; r?: number }) {
+  const radius = Math.max(0.001, Math.min(r, Math.min(...size) / 2 - 0.001));
+  return <RoundedBox args={size} radius={radius} smoothness={3} position={pos} rotation-y={rot} material={mat} castShadow receiveShadow />;
+}
+
+function Model({ url, pos, rot = 0, scale = 1 }: { url: string; pos: V3; rot?: number; scale?: number }) {
+  const { scene } = useGLTF(url);
+  const object = useMemo(() => {
+    const c = scene.clone(true);
+    c.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.isMesh) {
+        m.castShadow = true;
+        m.receiveShadow = true;
+      }
+    });
+    return c;
+  }, [scene]);
+  return <primitive object={object} position={pos} rotation-y={rot} scale={scale} />;
+}
+
+// A group placed at `pos`, rotated about y.
+function At({ pos, rot = 0, children }: { pos: V3; rot?: number; children: React.ReactNode }) {
+  return (
+    <group position={pos} rotation-y={rot}>
+      {children}
+    </group>
+  );
+}
+
+// Modern three-seater in linen; local front faces -x.
+function Sofa({ mats }: { mats: Mats }) {
+  const L = 2.3;
+  const D = 0.92;
+  const seatW = (L - 0.32) / 3;
+  return (
+    <group>
+      {[-1, 1].flatMap((sx) => [-1, 1].map((sz) => <Bx key={`${sx}${sz}`} size={[0.05, 0.08, 0.05]} pos={[sx * (D / 2 - 0.08), 0.04, sz * (L / 2 - 0.08)]} mat={mats.darkMetal} r={0.01} />))}
+      <Bx size={[D, 0.2, L]} pos={[0, 0.18, 0]} mat={mats.sofa} r={0.04} />
+      <Bx size={[0.18, 0.46, L]} pos={[D / 2 - 0.09, 0.51, 0]} mat={mats.sofa} r={0.06} />
+      {[-1, 1].map((s) => (
+        <Bx key={s} size={[D, 0.34, 0.16]} pos={[0, 0.45, s * (L / 2 - 0.08)]} mat={mats.sofa} r={0.06} />
+      ))}
+      {[-1, 0, 1].map((i) => (
+        <group key={i}>
+          <Bx size={[D - 0.3, 0.16, seatW - 0.02]} pos={[-0.06, 0.36, i * seatW]} mat={mats.sofa} r={0.07} />
+          <Bx size={[0.2, 0.4, seatW - 0.03]} pos={[D / 2 - 0.25, 0.62, i * seatW]} mat={mats.sofa} r={0.08} />
+        </group>
+      ))}
+      <Bx size={[0.12, 0.36, 0.36]} pos={[D / 2 - 0.4, 0.6, -0.72]} mat={mats.velvetOlive} r={0.06} />
+      <Bx size={[0.12, 0.34, 0.34]} pos={[D / 2 - 0.4, 0.6, 0.74]} mat={mats.velvetTaupe} r={0.06} />
+    </group>
+  );
+}
+
+// Upholstered bed; headboard at local -z, foot toward +z.
+function Bed({ w, l, mats, frame }: { w: number; l: number; mats: Mats; frame: THREE.Material }) {
+  return (
+    <group>
+      <Bx size={[w + 0.12, 0.3, l + 0.06]} pos={[0, 0.17, 0.03]} mat={frame} r={0.04} />
+      <Bx size={[w, 0.22, l]} pos={[0, 0.42, 0]} mat={mats.linenWhite} r={0.06} />
+      <Bx size={[w + 0.06, 0.07, l * 0.66]} pos={[0, 0.55, l * 0.17]} mat={mats.linenSand} r={0.03} />
+      <Bx size={[w + 0.08, 0.03, 0.42]} pos={[0, 0.6, l / 2 - 0.32]} mat={frame} r={0.01} />
+      {[-1, 1].map((s) => (
+        <Bx key={s} size={[w / 2 - 0.12, 0.14, 0.42]} pos={[(s * w) / 4, 0.6, -l / 2 + 0.3]} mat={mats.linenWhite} r={0.06} />
+      ))}
+      <Bx size={[w + 0.36, 1.1, 0.1]} pos={[0, 0.55, -l / 2 - 0.06]} mat={frame} r={0.04} />
+    </group>
+  );
+}
+
+// Oak wardrobe; front faces local +z.
+function Wardrobe({ w, h = 1.72, d = 0.58, mats }: { w: number; h?: number; d?: number; mats: Mats }) {
+  const doors = Math.max(2, Math.round(w / 0.5));
+  const dw = w / doors;
+  return (
+    <group>
+      <Bx size={[w, h, d]} pos={[0, h / 2, 0]} mat={mats.oak} r={0.01} />
+      {Array.from({ length: doors - 1 }, (_, i) => (
+        <mesh key={i} position={[-w / 2 + (i + 1) * dw, h / 2, d / 2 + 0.001]} material={mats.darkMetal}>
+          <boxGeometry args={[0.006, h - 0.04, 0.002]} />
+        </mesh>
+      ))}
+      {Array.from({ length: doors }, (_, i) => (
+        <mesh key={`h${i}`} position={[-w / 2 + (i + 0.5) * dw + (i % 2 ? -1 : 1) * dw * 0.38, h * 0.55, d / 2 + 0.012]} material={mats.darkMetal} castShadow>
+          <boxGeometry args={[0.012, 0.32, 0.02]} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+// Kitchen base run with marble top; front faces local +z.
+function Counter({ len, mats, hob, sink }: { len: number; mats: Mats; hob?: number; sink?: number }) {
+  const units = Math.max(1, Math.round(len / 0.6));
+  return (
+    <group>
+      <Bx size={[len, 0.1, 0.52]} pos={[0, 0.05, -0.03]} mat={mats.darkMetal} r={0.005} />
+      <Bx size={[len, 0.76, 0.58]} pos={[0, 0.48, 0]} mat={mats.lacquer} r={0.008} />
+      {Array.from({ length: units - 1 }, (_, i) => (
+        <mesh key={i} position={[-len / 2 + ((i + 1) * len) / units, 0.48, 0.291]} material={mats.darkMetal}>
+          <boxGeometry args={[0.004, 0.72, 0.002]} />
+        </mesh>
+      ))}
+      <Bx size={[len + 0.02, 0.04, 0.62]} pos={[0, 0.88, 0.01]} mat={mats.marble} r={0.006} />
+      {hob !== undefined && (
+        <mesh position={[hob, 0.902, 0]} material={mats.blackGlass}>
+          <boxGeometry args={[0.6, 0.006, 0.5]} />
+        </mesh>
+      )}
+      {sink !== undefined && (
+        <group position={[sink, 0.9, 0.02]}>
+          <mesh position-y={0.004} material={mats.steel}>
+            <boxGeometry args={[0.56, 0.004, 0.42]} />
+          </mesh>
+          <mesh position={[0, 0.17, -0.24]} material={mats.steel} castShadow>
+            <cylinderGeometry args={[0.012, 0.015, 0.34, 10]} />
+          </mesh>
+          <mesh position={[0, 0.33, -0.15]} rotation-x={Math.PI / 2} material={mats.steel} castShadow>
+            <cylinderGeometry args={[0.012, 0.012, 0.2, 10]} />
+          </mesh>
+        </group>
+      )}
+    </group>
+  );
+}
+
+// Bathroom pieces; fronts face local +z.
+function Vanity({ mats }: { mats: Mats }) {
+  return (
+    <group>
+      <Bx size={[0.8, 0.42, 0.46]} pos={[0, 0.5, 0]} mat={mats.oak} r={0.01} />
+      <Bx size={[0.82, 0.08, 0.48]} pos={[0, 0.75, 0]} mat={mats.ceramic} r={0.02} />
+      <mesh position={[0, 0.9, -0.17]} material={mats.steel} castShadow>
+        <cylinderGeometry args={[0.012, 0.014, 0.22, 10]} />
+      </mesh>
+      <mesh position={[0, 1.35, -0.225]} material={mats.mirror}>
+        <boxGeometry args={[0.7, 0.8, 0.012]} />
+      </mesh>
+    </group>
+  );
+}
+
+function Wc({ mats }: { mats: Mats }) {
+  return (
+    <group>
+      <Bx size={[0.38, 0.4, 0.54]} pos={[0, 0.2, 0.05]} mat={mats.ceramic} r={0.12} />
+      <Bx size={[0.4, 0.04, 0.48]} pos={[0, 0.42, 0.06]} mat={mats.ceramic} r={0.02} />
+      <Bx size={[0.4, 0.36, 0.16]} pos={[0, 0.55, -0.2]} mat={mats.ceramic} r={0.04} />
+    </group>
+  );
+}
+
+function Shower({ w, d, mats }: { w: number; d: number; mats: Mats }) {
+  return (
+    <group>
+      <Bx size={[w, 0.04, d]} pos={[0, 0.02, 0]} mat={mats.ceramic} r={0.01} />
+      <mesh position={[0, 0.9, -d / 2]} material={mats.glass}>
+        <boxGeometry args={[w * 0.7, 1.75, 0.01]} />
+      </mesh>
+      <mesh position={[0, 1.78, -d / 2]} material={mats.steel}>
+        <boxGeometry args={[w * 0.7, 0.02, 0.02]} />
+      </mesh>
+    </group>
+  );
+}
+
+const PI = Math.PI;
+
+// Furniture for the illustrative 2 BHK (plan coordinates in metres).
+function Furnishings() {
+  const mats = useMaterials();
+  const M = MODELS;
+  return (
+    <group>
+      {/* ── Living & dining ── */}
+      <Model url={M.mediaConsole} pos={[0.33, 0, 1.6]} rot={PI / 2} />
+      <Bx size={[0.035, 0.74, 1.3]} pos={[0.1, 1.2, 1.6]} mat={mats.blackGlass} r={0.008} />
+      <Bx size={[2.0, 0.012, 2.5]} pos={[2.05, 0.016, 1.6]} mat={mats.rug} r={0.004} />
+      <Model url={M.coffeeTable} pos={[2.05, 0.022, 1.6]} />
+      <At pos={[3.45, 0, 1.6]}>
+        <Sofa mats={mats} />
+      </At>
+      <Model url={M.sideTable} pos={[3.45, 0, 3.02]} />
+      <Model url={M.succulent} pos={[3.45, 0.55, 3.02]} scale={1.4} />
+      <Model url={M.plant} pos={[5.0, 0, 0.45]} scale={1.15} />
+      <At pos={[1.4, 0, 3.55]}>
+        <Bx size={[1.5, 0.04, 0.86]} pos={[0, 0.74, 0]} mat={mats.oak} r={0.012} />
+        {[-1, 1].flatMap((sx) =>
+          [-1, 1].map((sz) => <Bx key={`${sx}${sz}`} size={[0.04, 0.72, 0.04]} pos={[sx * 0.66, 0.36, sz * 0.34]} mat={mats.darkMetal} r={0.01} />),
+        )}
+      </At>
+      <Model url={M.diningChair} pos={[1.0, 0, 2.97]} />
+      <Model url={M.diningChair} pos={[1.8, 0, 2.97]} />
+      <Model url={M.diningChair} pos={[1.0, 0, 4.13]} rot={PI} />
+      <Model url={M.diningChair} pos={[1.8, 0, 4.13]} rot={PI} />
+
+      {/* ── Kitchen & utility ── */}
+      <At pos={[6.8, 0, 0.37]}>
+        <Counter len={2.66} mats={mats} hob={-0.75} sink={0.1} />
+      </At>
+      <At pos={[6.65, 0, 2.63]} rot={PI}>
+        <Counter len={1.5} mats={mats} />
+      </At>
+      <Bx size={[0.7, 1.75, 0.68]} pos={[7.78, 0.875, 2.58]} mat={mats.steel} r={0.02} />
+      <At pos={[9.55, 0, 0.4]}>
+        <Bx size={[0.6, 0.85, 0.6]} pos={[0, 0.425, 0]} mat={mats.lacquer} r={0.03} />
+        <mesh position={[0, 0.48, 0.302]} rotation-x={PI / 2} material={mats.blackGlass}>
+          <cylinderGeometry args={[0.17, 0.17, 0.01, 32]} />
+        </mesh>
+      </At>
+      <At pos={[8.75, 0, 0.37]}>
+        <Counter len={0.9} mats={mats} />
+      </At>
+
+      {/* ── Foyer ── */}
+      <Bx size={[1.2, 0.9, 0.36]} pos={[7.4, 0.45, 3.25]} mat={mats.oak} r={0.01} />
+      <Model url={M.plant} pos={[5.9, 0, 3.32]} scale={0.9} rot={1.2} />
+
+      {/* ── Master bedroom & dressing ── */}
+      <Bx size={[2.6, 0.012, 2.1]} pos={[1.9, 0.016, 6.6]} mat={mats.rug} r={0.004} />
+      <At pos={[1.9, 0, 6.8]} rot={PI}>
+        <Bed w={1.8} l={2.05} mats={mats} frame={mats.velvetTaupe} />
+      </At>
+      <Model url={M.sideTable} pos={[0.6, 0, 7.62]} />
+      <Model url={M.sideTable} pos={[3.2, 0, 7.62]} />
+      <Model url={M.succulent} pos={[3.2, 0.55, 7.62]} scale={1.2} />
+      <At pos={[1.29, 0, 4.97]}>
+        <Wardrobe w={2.3} mats={mats} />
+      </At>
+      <At pos={[4.6, 0, 7.65]} rot={PI}>
+        <Wardrobe w={1.46} d={0.55} mats={mats} />
+      </At>
+
+      {/* ── Master toilet ── */}
+      <At pos={[5.1, 0, 5.1]} rot={-PI / 2}>
+        <Vanity mats={mats} />
+      </At>
+      <At pos={[5.05, 0, 6.15]} rot={-PI / 2}>
+        <Wc mats={mats} />
+      </At>
+
+      {/* ── Bedroom 2 ── */}
+      <At pos={[7.33, 0, 6.4]} rot={-PI / 2}>
+        <Bed w={1.5} l={1.95} mats={mats} frame={mats.velvetSlate} />
+      </At>
+      <Model url={M.sideTable} pos={[8.05, 0, 7.6]} />
+      <Model url={M.succulent} pos={[8.05, 0.55, 7.6]} scale={1.2} />
+      <At pos={[5.75, 0, 6.5]} rot={PI / 2}>
+        <Wardrobe w={2.2} d={0.55} mats={mats} />
+      </At>
+
+      {/* ── Common toilet ── */}
+      <At pos={[9.7, 0, 5.5]} rot={-PI / 2}>
+        <Vanity mats={mats} />
+      </At>
+      <At pos={[9.65, 0, 6.45]} rot={-PI / 2}>
+        <Wc mats={mats} />
+      </At>
+      <At pos={[9.2, 0, 7.46]}>
+        <Shower w={1.46} d={0.93} mats={mats} />
+      </At>
+
+      {/* ── Balcony ── */}
+      <Model url={M.outdoorSet} pos={[4.1, 0, -0.8]} rot={PI / 2} />
+      <Model url={M.plant} pos={[0.5, 0, -1.15]} />
+    </group>
+  );
+}
+
+for (const url of Object.values(MODELS)) useGLTF.preload(url);
+
+/* ────────────────────────── camera & labels ────────────────────────── */
 
 function LabelProjector({
   layout,
@@ -153,167 +665,13 @@ function LabelProjector({
   return null;
 }
 
-function useGrassTexture() {
-  return useMemo(() => {
-    const canvas = document.createElement("canvas");
-    canvas.width = canvas.height = 16;
-    const ctx = canvas.getContext("2d")!;
-    const greens = ["#8fd16a", "#86c962", "#9ad874", "#7fc05c"];
-    for (let y = 0; y < 16; y += 2) {
-      for (let x = 0; x < 16; x += 2) {
-        ctx.fillStyle = greens[(x * 7 + y * 13 + ((x * y) % 5)) % greens.length];
-        ctx.fillRect(x, y, 2, 2);
-      }
-    }
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.magFilter = THREE.NearestFilter;
-    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(4, 4);
-    return tex;
-  }, []);
-}
-
-// Chunky grass-topped earth block the apartment sits on, with a few trees.
-function DioramaBase({ w, d }: { w: number; d: number }) {
-  const grass = useGrassTexture();
-  const dirt = useMemo(() => new THREE.MeshStandardMaterial({ color: "#7a5236", roughness: 0.9 }), []);
-  const materials = useMemo(() => [dirt, dirt, new THREE.MeshStandardMaterial({ map: grass, roughness: 0.95 }), dirt, dirt, dirt], [dirt, grass]);
-  const trees: [number, number][] = [
-    [-w / 2 + 0.5, -d / 2 + 0.5],
-    [w / 2 - 0.5, -d / 2 + 0.6],
-    [w / 2 - 0.5, d / 2 - 0.5],
-    [-w / 2 + 0.55, d / 2 - 0.6],
-  ];
-  return (
-    <group>
-      <mesh position-y={-BASE_H / 2} material={materials} receiveShadow castShadow>
-        <boxGeometry args={[w, BASE_H, d]} />
-      </mesh>
-      {trees.map(([x, z], i) => (
-        <group key={i} position={[x, 0, z]} scale={0.75}>
-          <mesh position-y={0.3} castShadow>
-            <cylinderGeometry args={[0.08, 0.11, 0.6, 6]} />
-            <meshStandardMaterial color="#7a5236" />
-          </mesh>
-          <mesh position-y={0.95} castShadow>
-            <coneGeometry args={[0.55, 1, 7]} />
-            <meshStandardMaterial color="#5fb35a" flatShading />
-          </mesh>
-          <mesh position-y={1.55} castShadow>
-            <coneGeometry args={[0.4, 0.8, 7]} />
-            <meshStandardMaterial color="#79c76a" flatShading />
-          </mesh>
-        </group>
-      ))}
-    </group>
-  );
-}
-
-function RoomFloor({ room, selected, onSelect }: { room: Room; selected: boolean; onSelect: (id: string) => void }) {
-  const [hovered, setHovered] = useState(false);
-  useCursor(hovered);
-  const color = useMemo(() => {
-    const base = new THREE.Color(FLOOR_COLORS[room.type]);
-    if (selected) return base.lerp(new THREE.Color("#c49a52"), 0.55);
-    if (hovered) return base.lerp(new THREE.Color("#ffffff"), 0.25);
-    return base;
-  }, [room.type, selected, hovered]);
-
-  return (
-    <mesh
-      position={[room.x + room.w / 2, 0.025, room.z + room.d / 2]}
-      receiveShadow
-      onClick={(e) => {
-        e.stopPropagation();
-        onSelect(room.id);
-      }}
-      onPointerOver={(e) => {
-        e.stopPropagation();
-        setHovered(true);
-      }}
-      onPointerOut={() => setHovered(false)}
-    >
-      <boxGeometry args={[room.w, 0.05, room.d]} />
-      <meshStandardMaterial color={color} roughness={0.8} />
-    </mesh>
-  );
-}
-
-// Each room draws its own four walls just inside its outline, so neighbouring
-// rooms' walls sit back to back. Door openings are cut out of any wall that
-// runs along the opening's line.
-function Walls({ layout }: { layout: FlatLayout }) {
-  const segments = useMemo(() => {
-    const out: { x: number; z: number; w: number; d: number }[] = [];
-    const t = WALL_T / 2;
-
-    const cut = (axis: "x" | "z", line: number, from: number, to: number) => {
-      let pieces: [number, number][] = [[from, to]];
-      for (const o of layout.openings) {
-        if (o.axis !== axis || Math.abs(o.at - line) > 0.2) continue;
-        const a = o.center - o.width / 2;
-        const b = o.center + o.width / 2;
-        pieces = pieces.flatMap(([p, q]) => {
-          if (b <= p || a >= q) return [[p, q] as [number, number]];
-          const keep: [number, number][] = [];
-          if (a > p) keep.push([p, a]);
-          if (b < q) keep.push([b, q]);
-          return keep;
-        });
-      }
-      return pieces.filter(([p, q]) => q - p > 0.02);
-    };
-
-    for (const r of layout.rooms) {
-      if (r.type === "balcony") {
-        // Low parapet instead of full walls on the open sides.
-        continue;
-      }
-      // Walls along x (front and back), full length.
-      for (const [line, z] of [
-        [r.z, r.z + t],
-        [r.z + r.d, r.z + r.d - t],
-      ]) {
-        for (const [p, q] of cut("x", line, r.x, r.x + r.w)) out.push({ x: (p + q) / 2, z, w: q - p, d: WALL_T / 2 });
-      }
-      // Walls along z (left and right), trimmed to avoid overlapping corners.
-      for (const [line, x] of [
-        [r.x, r.x + t],
-        [r.x + r.w, r.x + r.w - t],
-      ]) {
-        for (const [p, q] of cut("z", line, r.z + WALL_T / 2, r.z + r.d - WALL_T / 2)) out.push({ x, z: (p + q) / 2, w: WALL_T / 2, d: q - p });
-      }
-    }
-    return out;
-  }, [layout]);
-
-  const balconies = layout.rooms.filter((r) => r.type === "balcony");
-
-  return (
-    <group>
-      {segments.map((s, i) => (
-        <RoundedBox key={i} args={[s.w, WALL_H, s.d]} radius={0.025} smoothness={2} position={[s.x, WALL_H / 2, s.z]} castShadow receiveShadow>
-          <meshStandardMaterial color="#fdfcf9" roughness={0.85} />
-        </RoundedBox>
-      ))}
-      {balconies.map((b) => (
-        <mesh key={b.id} position={[b.x + b.w / 2, 0.45, b.z + 0.03]}>
-          <boxGeometry args={[b.w, 0.9, 0.04]} />
-          <meshStandardMaterial color="#9fc3e0" transparent opacity={0.45} />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-
 function CameraRig({
   layout,
   bounds,
   selected,
 }: {
   layout: FlatLayout;
-  bounds: { cx: number; cz: number; size: number };
+  bounds: { cx: number; cz: number };
   selected: string | null;
 }) {
   const controls = useRef<OrbitControlsImpl>(null);
@@ -325,12 +683,12 @@ function CameraRig({
   useEffect(() => {
     const room = layout.rooms.find((r) => r.id === selected);
     if (!room) {
-      goal.current = { pos: new THREE.Vector3(6, 11, 12).multiplyScalar(fit), target: new THREE.Vector3(0, 0, 0) };
+      goal.current = { pos: new THREE.Vector3(6.5, 10, -11.5).multiplyScalar(fit), target: new THREE.Vector3(0, 0, 0) };
       return;
     }
-    const center = new THREE.Vector3(room.x + room.w / 2 - bounds.cx, 0.4, room.z + room.d / 2 - bounds.cz);
-    const reach = Math.max(room.w, room.d) * 0.9 + 2.2;
-    goal.current = { pos: center.clone().add(new THREE.Vector3(reach * 0.45, reach * 0.95, reach * 0.8)), target: center };
+    const center = new THREE.Vector3(room.x + room.w / 2 - bounds.cx, 0.5, room.z + room.d / 2 - bounds.cz);
+    const reach = Math.max(room.w, room.d) * 0.85 + 2.4;
+    goal.current = { pos: center.clone().add(new THREE.Vector3(reach * 0.5, reach * 0.9, -reach * 0.8)), target: center };
   }, [selected, layout, bounds, fit]);
 
   useFrame((_, dt) => {
@@ -351,7 +709,7 @@ function CameraRig({
       enableDamping
       enablePan={false}
       minDistance={3}
-      maxDistance={26}
+      maxDistance={24}
       maxPolarAngle={Math.PI / 2.3}
       onStart={() => (goal.current = null)}
     />
