@@ -26,7 +26,7 @@ export type Project = {
   amenities: string[];
   connectivity: { place: string; time: string }[];
   mapQuery: string;
-  landingPage?: string;
+  page: string; // dedicated page for this project, e.g. "/sarjapura-g47/"
   whatsappMessage?: string;
 };
 
@@ -104,7 +104,7 @@ export const projects: Project[] = [
       { place: "Electronic City", time: "30 min" },
     ],
     mapQuery: "DMart Sarjapura Main Road, Bengaluru",
-    landingPage: "/sarjapura-g47/",
+    page: "/sarjapura-g47/",
     whatsappMessage:
       "Hi, I'm interested in the G+47 residential project on Sarjapura Main Road. Please share the floor plans, pricing and EOI details.",
   },
@@ -129,6 +129,8 @@ export const projects: Project[] = [
     amenities: [],
     connectivity: [],
     mapQuery: "",
+    page: "/villas/",
+    whatsappMessage: "Hi, I'm interested in your upcoming villa plots project. Please share the location, plot sizes and pricing when available.",
   },
 ];
 

@@ -40,7 +40,7 @@ export default function Footer() {
           <ul className="mt-6 space-y-3">
             {projects.slice(0, 5).map((p) => (
               <li key={p.slug}>
-                <Link href={p.landingPage ?? `/projects/${p.slug}/`} className="transition-colors hover:text-white">
+                <Link href={p.page} className="transition-colors hover:text-white">
                   {p.type.split(" · ")[0]} · {p.locality}
                 </Link>
               </li>

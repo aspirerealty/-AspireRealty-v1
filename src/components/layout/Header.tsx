@@ -56,7 +56,7 @@ export default function Header() {
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main">
+          <nav className="hidden items-center gap-6 lg:flex xl:gap-8" aria-label="Main">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -76,11 +76,13 @@ export default function Header() {
           <div className="flex items-center gap-2">
             <a
               href={site.phoneHref}
+              aria-label={`Call ${site.phone}`}
               className={`hidden items-center gap-2 border px-4 py-2.5 text-sm font-semibold transition-all duration-500 sm:flex ${
                 solid ? "border-navy-900/20 text-navy-900 hover:bg-navy-900 hover:text-white" : "border-white/30 text-white hover:bg-white hover:text-navy-900"
               }`}
             >
-              <Phone className="size-4" /> {site.phone}
+              {/* Number collapses to just the icon on smaller laptops so the menu fits */}
+              <Phone className="size-4" /> <span className="lg:hidden xl:inline">{site.phone}</span>
             </a>
             <button
               type="button"

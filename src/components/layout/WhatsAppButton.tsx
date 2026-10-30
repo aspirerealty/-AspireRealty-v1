@@ -9,7 +9,7 @@ export default function WhatsAppButton() {
   const pathname = usePathname();
   // On a project landing page, prefill that project's message and hide on
   // phones (the page has its own bottom action bar with WhatsApp).
-  const landing = projects.find((p) => p.landingPage === pathname);
+  const landing = projects.find((p) => p.page === pathname);
 
   return (
     <motion.a

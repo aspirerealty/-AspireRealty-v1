@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!--
+  Netlify Forms definition. Netlify scans this file at deploy time to register
+  the "enquiry" form; the site's React forms post here (see src/lib/leads.ts).
+  Keep the field names in sync with the Lead type.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>Forms</title>
+  </head>
+  <body>
+    <form name="enquiry" data-netlify="true" netlify-honeypot="website" hidden>
+      <input type="text" name="name" />
+      <input type="tel" name="phone" />
+      <input type="email" name="email" />
+      <input type="text" name="reason" />
+      <input type="text" name="project" />
+      <input type="text" name="referrerName" />
+      <input type="tel" name="referrerPhone" />
+      <textarea name="message"></textarea>
+      <input type="text" name="source" />
+      <input type="text" name="page" />
+      <input type="text" name="website" />
+    </form>
+  </body>
+</html>

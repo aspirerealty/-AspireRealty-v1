@@ -10,7 +10,7 @@ import ProjectCard from "@/components/projects/ProjectCard";
 import BlogCard from "@/components/blog/BlogCard";
 import Faq from "@/components/sections/Faq";
 import ContactSection from "@/components/sections/ContactSection";
-import { projects } from "@/data/projects";
+import { getProject, projects } from "@/data/projects";
 import { blogs } from "@/data/blogs";
 import { faqs } from "@/data/faqs";
 import { stats } from "@/data/site";
@@ -23,7 +23,7 @@ const pillars = [
 ];
 
 export default function Home() {
-  const featured = projects.find((p) => p.landingPage);
+  const featured = getProject("sarjapura-g47");
 
   return (
     <>
@@ -89,7 +89,7 @@ export default function Home() {
               </h2>
               <p className="mt-6 max-w-xl text-lg text-white/70">{featured.summary}</p>
               <div className="mt-10 flex flex-wrap gap-4">
-                <ButtonLink href={featured.landingPage!}>View project</ButtonLink>
+                <ButtonLink href={featured.page}>View project</ButtonLink>
                 <ButtonLink href="#enquire" variant="outline-light">
                   Register your interest
                 </ButtonLink>

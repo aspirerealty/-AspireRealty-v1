@@ -32,7 +32,18 @@ Search the code for `TODO` to find every placeholder that still needs real infor
 
 All motion is switched off automatically for visitors who enable "reduce motion" on their device.
 
-## Deploying to AWS
+## Hosting on Netlify (current)
+
+1. [app.netlify.com](https://app.netlify.com) → **Add new project** → **Import an existing project** → GitHub → `aspirerealty/-AspireRealty-v1`.
+2. Netlify reads `netlify.toml` (build `npm run build`, publish `out`) — just click **Deploy**.
+3. **Forms:** Project configuration → **Forms** → enable form detection, then redeploy once. Leads from every form on the site arrive in the `enquiry` form.
+   - Add an email notification (Forms → Form notifications → Email) so each lead lands in your inbox.
+   - The free plan includes 100 form submissions per month.
+4. **Domain:** Domain management → add your custom domain (HTTPS is automatic).
+
+Every push to `main` redeploys the site automatically.
+
+## Deploying to AWS (later)
 
 ### 1. Website (Amplify Hosting)
 

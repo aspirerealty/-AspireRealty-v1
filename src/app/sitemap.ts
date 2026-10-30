@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const pages = ["/", "/about/", "/projects/", "/blogs/", "/referral/", "/contact/", "/privacy-policy/", "/terms/", "/disclaimer/"];
   return [
     ...pages.map((p) => ({ url: `${site.url}${p}` })),
-    ...projects.map((p) => ({ url: `${site.url}${p.landingPage ?? `/projects/${p.slug}/`}` })),
+    ...projects.map((p) => ({ url: `${site.url}${p.page}` })),
     ...blogs.map((b) => ({ url: `${site.url}/blogs/${b.slug}/`, lastModified: b.date })),
   ];
 }

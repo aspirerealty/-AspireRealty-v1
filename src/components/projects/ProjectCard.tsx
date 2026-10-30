@@ -5,7 +5,7 @@ import { type Project, statusLabels } from "@/data/projects";
 
 export default function ProjectCard({ project }: { project: Project }) {
   return (
-    <Link href={project.landingPage ?? `/projects/${project.slug}/`} className="group block">
+    <Link href={project.page} className="group block">
       <div className="relative aspect-[4/5] overflow-hidden bg-navy-900">
         <Image
           src={project.cover}
