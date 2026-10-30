@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useReducedMotion } from "motion/react";
 
 // Cinematic hero background: short clips play in sequence — design, model,
@@ -15,8 +15,21 @@ const CLIPS = [
   { src: "/assets/video/hero-developer.mp4", poster: "/assets/video/hero-developer.jpg", label: "Delivery" },
 ];
 
+// Laptops and desktops get 1080p clips; phones and tablets get lighter 720p.
+const wideQuery = "(min-width: 1024px)";
+const subscribeWide = (cb: () => void) => {
+  const mq = window.matchMedia(wideQuery);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+};
+
 export default function HeroVideo() {
   const reduce = useReducedMotion();
+  const wide = useSyncExternalStore(
+    subscribeWide,
+    () => window.matchMedia(wideQuery).matches,
+    () => null,
+  );
   const videos = useRef<(HTMLVideoElement | null)[]>([]);
   const bars = useRef<(HTMLSpanElement | null)[]>([]);
   const [current, setCurrent] = useState(0);
@@ -33,7 +46,7 @@ export default function HeroVideo() {
         v.pause();
       }
     });
-  }, [current, reduce]);
+  }, [current, reduce, wide]);
 
   // Drive the chapter progress bars from the playing clip.
   useEffect(() => {
@@ -63,7 +76,7 @@ export default function HeroVideo() {
         <video
           key={clip.src}
           ref={(el) => void (videos.current[i] = el)}
-          src={clip.src}
+          src={wide === null ? undefined : wide ? clip.src : clip.src.replace(".mp4", "-720.mp4")}
           poster={clip.poster}
           muted
           playsInline

@@ -50,7 +50,7 @@ export default function LandingHero({ name, partner, source }: { name: string; p
           initial="hidden"
           animate="show"
           variants={{ show: { transition: { staggerChildren: 0.1, delayChildren: 0.8 } } }}
-          className="mt-10 grid max-w-2xl grid-cols-2 gap-px bg-white/10 sm:grid-cols-4"
+          className="mt-10 grid max-w-2xl grid-cols-2 gap-px bg-white/10 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4"
         >
           {chips.map((c) => (
             <motion.div key={c.label} variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="bg-navy-950/60 px-5 py-4 backdrop-blur">

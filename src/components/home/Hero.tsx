@@ -21,8 +21,9 @@ export default function Hero() {
         {/* Cinematic video: design → model → city → delivery */}
         <HeroVideo />
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/60 to-navy-950/10" />
-      <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-transparent to-navy-950/40" />
+      {/* Darker behind the text, letting the footage come through strongly on the right */}
+      <div className="absolute inset-0 bg-gradient-to-r from-navy-950/85 via-navy-950/35 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 via-transparent to-navy-950/30" />
 
       <motion.div style={{ y: textY, opacity: fade }} className="container-x relative pt-28 pb-24">
         <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }} className="eyebrow text-gold-400">

@@ -26,6 +26,12 @@ html {
   scroll-behavior: auto; /* Lenis handles smooth scrolling */
 }
 
+/* Nothing (e.g. the WhatsApp pulse) may cause sideways scrolling on phones */
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   background: var(--color-cream);
   color: var(--color-ink);
