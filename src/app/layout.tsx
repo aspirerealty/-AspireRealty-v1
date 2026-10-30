@@ -5,6 +5,7 @@ import Providers from "@/components/motion/Providers";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
+import Preloader from "@/components/brand/Preloader";
 import { site } from "@/data/site";
 
 const cormorant = Cormorant_Garamond({
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en-IN" className={`${cormorant.variable} ${manrope.variable}`}>
       <body className="flex min-h-svh flex-col">
+        <Preloader />
         <Providers>
           <Header />
           <main className="flex-1">{children}</main>
