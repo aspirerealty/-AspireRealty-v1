@@ -26,6 +26,7 @@ import MobileCtaBar from "@/components/landing/MobileCtaBar";
 import Faq from "@/components/sections/Faq";
 import TowersShowcase from "@/components/three/TowersShowcase";
 import FlatExplorer from "@/components/three/FlatExplorer";
+import BlueprintBackdrop from "@/components/sections/BlueprintBackdrop";
 import { getProject } from "@/data/projects";
 import { site, whatsappLink } from "@/data/site";
 
@@ -135,19 +136,20 @@ export default function SarjapuraG47Page() {
       </section>
 
       {/* 3D towers */}
-      <section id="rise" className="scroll-mt-32 bg-navy-950 py-24 text-white sm:py-32">
-        <div className="container-x">
+      <section id="rise" className="relative scroll-mt-32 overflow-hidden bg-cream py-24 sm:py-32">
+        <BlueprintBackdrop />
+        <div className="container-x relative">
           <div className="grid items-end gap-8 lg:grid-cols-2">
             <Reveal>
-              <span className="eyebrow text-gold-400">Watch it rise</span>
-              <h2 className="mt-4 font-display text-4xl leading-tight sm:text-5xl lg:text-6xl">
-                Two towers. <em className="text-gold-400">Forty-seven floors.</em>
+              <span className="eyebrow">Watch it rise</span>
+              <h2 className="heading-lg mt-4">
+                Two towers. <em className="text-gold-600">Forty-seven floors.</em>
               </h2>
             </Reveal>
             <Reveal delay={0.1}>
-              <p className="text-lg leading-relaxed text-white/70">
-                See the twin G+47 towers take shape floor by floor above their landscaped podium — then watch the windows light up as evening falls
-                over Sarjapura. Explore it from every side.
+              <p className="prose-body">
+                Watch the twin G+47 towers stack up floor by floor above their landscaped podium. Pick any floor, tap the labels to explore, and
+                switch to night to see the windows glow.
               </p>
             </Reveal>
           </div>

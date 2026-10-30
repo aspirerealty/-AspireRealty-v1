@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import BlueprintMotion from "./BlueprintMotion";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ChevronDown } from "lucide-react";
@@ -18,12 +18,10 @@ export default function Hero() {
   return (
     <section ref={ref} className="relative flex min-h-svh items-center overflow-hidden bg-navy-950">
       <motion.div style={{ y: imageY }} className="absolute inset-0">
-        <motion.div initial={{ scale: 1.2 }} animate={{ scale: 1 }} transition={{ duration: 2.4 }} className="absolute inset-0">
-          <Image src="/assets/images/sarjapura-tower-dusk.jpg" alt="" fill priority sizes="100vw" className="object-cover object-[50%_30%] lg:hidden" />
-          <Image src="/assets/images/skyline.jpg" alt="" fill priority sizes="100vw" className="hidden object-cover lg:block" />
-        </motion.div>
+        {/* "From blueprint to building" motion background */}
+        <BlueprintMotion />
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-r from-navy-950/95 via-navy-950/70 to-navy-950/20" />
+      <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/55 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-transparent to-navy-950/40" />
 
       <motion.div style={{ y: textY, opacity: fade }} className="container-x relative pt-28 pb-24">

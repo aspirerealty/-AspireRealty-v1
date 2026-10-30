@@ -5,6 +5,8 @@ import PageHero from "@/components/ui/PageHero";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { ImageReveal, Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import ContactSection from "@/components/sections/ContactSection";
+import FeatureCards from "@/components/sections/FeatureCards";
+import BlueprintBackdrop from "@/components/sections/BlueprintBackdrop";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -13,10 +15,10 @@ export const metadata: Metadata = {
 };
 
 const values = [
-  { icon: Handshake, title: "Trusted collaborations", text: "We work only with developers whose approvals, finances and construction quality we have verified ourselves." },
-  { icon: ShieldCheck, title: "Transparency first", text: "Every price, charge and offer is explained in writing before you commit. No surprises at registration." },
-  { icon: Building, title: "Handpicked locations", text: "We focus on growth corridors with real infrastructure, schools and workplaces — not just promises." },
-  { icon: KeyRound, title: "Customer first", text: "One dedicated advisor from your first enquiry until the day you receive your keys." },
+  { icon: <Handshake />, title: "Trusted collaborations", text: "We work only with developers whose approvals, finances and construction quality we have verified ourselves." },
+  { icon: <ShieldCheck />, title: "Transparency first", text: "Every price, charge and offer is explained in writing before you commit. No surprises at registration." },
+  { icon: <Building />, title: "Handpicked locations", text: "We focus on growth corridors with real infrastructure, schools and workplaces — not just promises." },
+  { icon: <KeyRound />, title: "Customer first", text: "One dedicated advisor from your first enquiry until the day you receive your keys." },
 ];
 
 const journey = [
@@ -83,18 +85,21 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-24 sm:py-32">
-        <div className="container-x">
-          <SectionHeading align="center" eyebrow="Our values" title="Built with care. Delivered with pride." />
-          <Stagger className="mt-16 grid gap-px bg-navy-900/10 sm:grid-cols-2 lg:grid-cols-4">
-            {values.map(({ icon: Icon, title, text }) => (
-              <StaggerItem key={title} className="group bg-cream p-8 transition-colors duration-500 hover:bg-navy-900">
-                <Icon className="size-9 text-gold-500" strokeWidth={1.4} />
-                <h3 className="mt-6 font-display text-2xl text-navy-900 transition-colors group-hover:text-white">{title}</h3>
-                <p className="mt-3 leading-relaxed text-muted transition-colors group-hover:text-white/70">{text}</p>
-              </StaggerItem>
-            ))}
-          </Stagger>
+      <section className="relative overflow-hidden py-24 sm:py-32">
+        <BlueprintBackdrop />
+        <div className="container-x relative">
+          <SectionHeading
+            align="center"
+            eyebrow="Our values"
+            title={
+              <>
+                Built with care. <em className="text-gold-600">Delivered with pride.</em>
+              </>
+            }
+          />
+          <div className="mt-16">
+            <FeatureCards items={values} />
+          </div>
         </div>
       </section>
 

@@ -9,6 +9,9 @@ import { ButtonLink } from "@/components/ui/Button";
 import ProjectCard from "@/components/projects/ProjectCard";
 import BlogCard from "@/components/blog/BlogCard";
 import Faq from "@/components/sections/Faq";
+import FeatureCards from "@/components/sections/FeatureCards";
+import BlueprintBackdrop from "@/components/sections/BlueprintBackdrop";
+import CubeWall from "@/components/three/CubeWall";
 import ContactSection from "@/components/sections/ContactSection";
 import { getProject, projects } from "@/data/projects";
 import { blogs } from "@/data/blogs";
@@ -16,10 +19,10 @@ import { faqs } from "@/data/faqs";
 import { stats } from "@/data/site";
 
 const pillars = [
-  { icon: Handshake, title: "Trusted collaborations", text: "We partner only with developers whose approvals, track record and construction quality we've verified." },
-  { icon: ShieldCheck, title: "Transparent advice", text: "Clear pricing, honest comparisons and every charge explained before you commit." },
-  { icon: Building, title: "Handpicked locations", text: "Growth corridors with strong infrastructure, schools and workplaces close by." },
-  { icon: KeyRound, title: "With you till the keys", text: "From site visit and home loan to registration and handover — one team, start to finish." },
+  { icon: <Handshake />, title: "Trusted collaborations", text: "We partner only with developers whose approvals, track record and construction quality we've verified." },
+  { icon: <ShieldCheck />, title: "Transparent advice", text: "Clear pricing, honest comparisons and every charge explained before you commit." },
+  { icon: <Building />, title: "Handpicked locations", text: "Growth corridors with strong infrastructure, schools and workplaces close by." },
+  { icon: <KeyRound />, title: "With you till the keys", text: "From site visit and home loan to registration and handover — one team, start to finish." },
 ];
 
 export default function Home() {
@@ -129,20 +132,26 @@ export default function Home() {
       </section>
 
       {/* Why us */}
-      <section className="bg-white py-24 sm:py-32">
-        <div className="container-x">
-          <SectionHeading align="center" eyebrow="Why Aspire" title="Built with care. Delivered with pride." />
-          <Stagger className="mt-16 grid gap-px bg-navy-900/10 sm:grid-cols-2 lg:grid-cols-4">
-            {pillars.map(({ icon: Icon, title, text }) => (
-              <StaggerItem key={title} className="group bg-white p-8 transition-colors duration-500 hover:bg-navy-900">
-                <Icon className="size-9 text-gold-500" strokeWidth={1.4} />
-                <h3 className="mt-6 font-display text-2xl text-navy-900 transition-colors group-hover:text-white">{title}</h3>
-                <p className="mt-3 leading-relaxed text-muted transition-colors group-hover:text-white/70">{text}</p>
-              </StaggerItem>
-            ))}
-          </Stagger>
+      <section className="relative overflow-hidden bg-white py-24 sm:py-32">
+        <BlueprintBackdrop />
+        <div className="container-x relative">
+          <SectionHeading
+            align="center"
+            eyebrow="Why Aspire"
+            title={
+              <>
+                Built with care. <em className="text-gold-600">Delivered with pride.</em>
+              </>
+            }
+          />
+          <div className="mt-16">
+            <FeatureCards items={pillars} />
+          </div>
         </div>
       </section>
+
+      {/* Interactive cube wall */}
+      <CubeWall />
 
       {/* Referral teaser */}
       <section className="py-24 sm:py-32">

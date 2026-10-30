@@ -2,26 +2,29 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, OrbitControls, useCursor } from "@react-three/drei";
+import { ContactShadows, OrbitControls, RoundedBox, useCursor } from "@react-three/drei";
+import { EffectComposer, N8AO } from "@react-three/postprocessing";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { FlatLayout, Room, RoomType } from "@/data/flat-layouts";
 
-// "Dollhouse" view of an apartment: floors, cut-away walls with door
-// openings, simple furniture and clickable room labels. Selecting a room
-// flies the camera into it.
+// Diorama "dollhouse" view of an apartment sitting on a grass-and-earth base:
+// pastel floors, rounded cut-away walls with door openings, soft furniture
+// and architectural annotation labels. Selecting a room flies the camera in.
 
 const WALL_H = 1.5; // cut-away height so every room is visible from above
 const WALL_T = 0.14;
 
 const FLOOR_COLORS: Record<RoomType, string> = {
-  living: "#caa57a",
-  bedroom: "#b98f62",
-  kitchen: "#d9dde2",
-  wet: "#cfd6dc",
-  balcony: "#9aa5ae",
-  passage: "#d3b48c",
+  living: "#e8cfa6",
+  bedroom: "#dcb88f",
+  kitchen: "#eef0f2",
+  wet: "#dfe7ef",
+  balcony: "#cdd5dd",
+  passage: "#ecdcc0",
 };
+const BASE_H = 0.8;
+const MARGIN = 1.1;
 
 type Props = {
   layout: FlatLayout;
@@ -35,19 +38,33 @@ export default function FlatScene({ layout, active, selected, onSelect }: Props)
     const xs = layout.rooms.flatMap((r) => [r.x, r.x + r.w]);
     const zs = layout.rooms.flatMap((r) => [r.z, r.z + r.d]);
     const minX = Math.min(...xs), maxX = Math.max(...xs), minZ = Math.min(...zs), maxZ = Math.max(...zs);
-    return { cx: (minX + maxX) / 2, cz: (minZ + maxZ) / 2, size: Math.max(maxX - minX, maxZ - minZ) };
+    return { cx: (minX + maxX) / 2, cz: (minZ + maxZ) / 2, w: maxX - minX, d: maxZ - minZ, size: Math.max(maxX - minX, maxZ - minZ) };
   }, [layout]);
 
   // Room labels are plain DOM buttons laid over the canvas and moved every
   // frame by <LabelProjector>, which is lighter than one React root per label.
   const labels = useRef<(HTMLButtonElement | null)[]>([]);
+  const touch = useMemo(() => window.matchMedia("(pointer: coarse)").matches, []);
 
   return (
     <div className="absolute inset-0">
-      <Canvas frameloop={active ? "always" : "never"} dpr={[1, 1.75]} shadows camera={{ position: [6, 11, 12], fov: 40 }}>
-        <color attach="background" args={["#eef1f4"]} />
-        <hemisphereLight args={["#ffffff", "#c9c2b6", 1.2]} />
-        <directionalLight position={[6, 12, 4]} intensity={1.4} castShadow shadow-mapSize={[1024, 1024]} />
+      <Canvas frameloop={active ? "always" : "never"} dpr={[1, 1.75]} shadows="soft" camera={{ position: [6, 11, 12], fov: 40 }} gl={{ antialias: false }}>
+        <color attach="background" args={["#e4e9f0"]} />
+        <hemisphereLight args={["#ffffff", "#bcc6d6", 1.3]} />
+        <directionalLight
+          position={[7, 14, 6]}
+          intensity={1.9}
+          castShadow
+          shadow-mapSize={[2048, 2048]}
+          shadow-bias={-0.0004}
+          shadow-normalBias={0.02}
+          shadow-camera-left={-10}
+          shadow-camera-right={10}
+          shadow-camera-top={10}
+          shadow-camera-bottom={-10}
+        />
+        <directionalLight position={[-8, 6, -6]} intensity={0.4} color="#d6e2ff" />
+        <DioramaBase w={bounds.w + MARGIN * 2} d={bounds.d + MARGIN * 2} />
 
         {/* Centre the plan at the origin */}
         <group position={[-bounds.cx, 0, -bounds.cz]}>
@@ -56,14 +73,24 @@ export default function FlatScene({ layout, active, selected, onSelect }: Props)
           ))}
           <Walls layout={layout} />
           {layout.furniture.map((f, i) => (
-            <mesh key={i} position={[f.x + f.w / 2, f.h / 2 + 0.05, f.z + f.d / 2]} castShadow receiveShadow>
-              <boxGeometry args={[f.w, f.h, f.d]} />
+            <RoundedBox
+              key={i}
+              args={[f.w, f.h, f.d]}
+              radius={Math.min(0.07, Math.min(f.w, f.h, f.d) / 2 - 0.01)}
+              smoothness={3}
+              position={[f.x + f.w / 2, f.h / 2 + 0.05, f.z + f.d / 2]}
+              castShadow
+              receiveShadow
+            >
               <meshStandardMaterial color={f.color} roughness={0.7} />
-            </mesh>
+            </RoundedBox>
           ))}
         </group>
 
-        <ContactShadows position={[0, 0, 0]} opacity={0.35} scale={30} blur={2.5} far={4} />
+        <ContactShadows position={[0, -BASE_H - 0.02, 0]} opacity={0.4} scale={34} blur={2.6} far={6} color="#1d2b3f" />
+        <EffectComposer multisampling={touch ? 0 : 4}>
+          {touch ? <></> : <N8AO aoRadius={0.8} intensity={2} distanceFalloff={0.8} halfRes quality="medium" />}
+        </EffectComposer>
         <CameraRig layout={layout} bounds={bounds} selected={selected} />
         <LabelProjector layout={layout} bounds={bounds} labels={labels} />
       </Canvas>
@@ -75,11 +102,18 @@ export default function FlatScene({ layout, active, selected, onSelect }: Props)
             type="button"
             onClick={() => onSelect(room.id)}
             style={{ opacity: 0 }}
-            className={`pointer-events-auto absolute top-0 left-0 whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold shadow-md transition-colors ${
-              selected === room.id ? "bg-gold-500 text-navy-950" : "bg-white/90 text-navy-900 hover:bg-white"
-            }`}
+            className="group pointer-events-auto absolute top-0 left-0 flex flex-col items-center"
           >
-            {room.name}
+            {/* Annotation: label on a short leader line down to a dot */}
+            <span
+              className={`whitespace-nowrap border-b px-1.5 pb-0.5 text-[10px] font-bold tracking-[0.18em] uppercase backdrop-blur-sm transition-colors ${
+                selected === room.id ? "border-gold-500 bg-gold-500 text-navy-950" : "border-navy-900/40 bg-white/70 text-navy-900 group-hover:bg-white"
+              }`}
+            >
+              {room.name}
+            </span>
+            <span className="h-4 w-px bg-navy-900/40" />
+            <span className={`size-2 rounded-full border-2 border-gold-500 ${selected === room.id ? "bg-gold-500" : "bg-white"}`} />
           </button>
         ))}
       </div>
@@ -111,12 +145,69 @@ function LabelProjector({
       const behind = v.z > 1;
       const x = (v.x * 0.5 + 0.5) * size.width;
       const y = (-v.y * 0.5 + 0.5) * size.height;
-      el.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+      el.style.transform = `translate(-50%, -100%) translate(${x}px, ${y + 4}px)`;
       el.style.opacity = behind ? "0" : "1";
     });
   });
 
   return null;
+}
+
+function useGrassTexture() {
+  return useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 16;
+    const ctx = canvas.getContext("2d")!;
+    const greens = ["#8fd16a", "#86c962", "#9ad874", "#7fc05c"];
+    for (let y = 0; y < 16; y += 2) {
+      for (let x = 0; x < 16; x += 2) {
+        ctx.fillStyle = greens[(x * 7 + y * 13 + ((x * y) % 5)) % greens.length];
+        ctx.fillRect(x, y, 2, 2);
+      }
+    }
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.magFilter = THREE.NearestFilter;
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(4, 4);
+    return tex;
+  }, []);
+}
+
+// Chunky grass-topped earth block the apartment sits on, with a few trees.
+function DioramaBase({ w, d }: { w: number; d: number }) {
+  const grass = useGrassTexture();
+  const dirt = useMemo(() => new THREE.MeshStandardMaterial({ color: "#7a5236", roughness: 0.9 }), []);
+  const materials = useMemo(() => [dirt, dirt, new THREE.MeshStandardMaterial({ map: grass, roughness: 0.95 }), dirt, dirt, dirt], [dirt, grass]);
+  const trees: [number, number][] = [
+    [-w / 2 + 0.5, -d / 2 + 0.5],
+    [w / 2 - 0.5, -d / 2 + 0.6],
+    [w / 2 - 0.5, d / 2 - 0.5],
+    [-w / 2 + 0.55, d / 2 - 0.6],
+  ];
+  return (
+    <group>
+      <mesh position-y={-BASE_H / 2} material={materials} receiveShadow castShadow>
+        <boxGeometry args={[w, BASE_H, d]} />
+      </mesh>
+      {trees.map(([x, z], i) => (
+        <group key={i} position={[x, 0, z]} scale={0.75}>
+          <mesh position-y={0.3} castShadow>
+            <cylinderGeometry args={[0.08, 0.11, 0.6, 6]} />
+            <meshStandardMaterial color="#7a5236" />
+          </mesh>
+          <mesh position-y={0.95} castShadow>
+            <coneGeometry args={[0.55, 1, 7]} />
+            <meshStandardMaterial color="#5fb35a" flatShading />
+          </mesh>
+          <mesh position-y={1.55} castShadow>
+            <coneGeometry args={[0.4, 0.8, 7]} />
+            <meshStandardMaterial color="#79c76a" flatShading />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
 }
 
 function RoomFloor({ room, selected, onSelect }: { room: Room; selected: boolean; onSelect: (id: string) => void }) {
@@ -202,10 +293,9 @@ function Walls({ layout }: { layout: FlatLayout }) {
   return (
     <group>
       {segments.map((s, i) => (
-        <mesh key={i} position={[s.x, WALL_H / 2, s.z]} castShadow receiveShadow>
-          <boxGeometry args={[s.w, WALL_H, s.d]} />
-          <meshStandardMaterial color="#fbfaf7" roughness={0.9} />
-        </mesh>
+        <RoundedBox key={i} args={[s.w, WALL_H, s.d]} radius={0.025} smoothness={2} position={[s.x, WALL_H / 2, s.z]} castShadow receiveShadow>
+          <meshStandardMaterial color="#fdfcf9" roughness={0.85} />
+        </RoundedBox>
       ))}
       {balconies.map((b) => (
         <mesh key={b.id} position={[b.x + b.w / 2, 0.45, b.z + 0.03]}>

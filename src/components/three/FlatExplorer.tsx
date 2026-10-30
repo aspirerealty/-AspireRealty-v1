@@ -31,7 +31,7 @@ export default function FlatExplorer({ project, source }: { project: string; sou
 
   return (
     <div className="grid overflow-hidden border border-navy-900/10 bg-white lg:grid-cols-[1fr_340px]">
-      <div ref={ref} className="relative h-[460px] bg-[#eef1f4] sm:h-[560px]">
+      <div ref={ref} className="relative h-[460px] bg-[#e4e9f0] sm:h-[560px]">
         {mounted && <FlatScene layout={layout} active={active} selected={selected} onSelect={setSelected} />}
         <div className="pointer-events-none absolute top-4 left-4 flex items-center gap-2 bg-white/90 px-3 py-1.5 text-xs font-semibold text-navy-900 shadow-sm">
           <MousePointerClick className="size-3.5 text-gold-600" /> Drag to rotate · <span className="pointer-coarse:hidden">Scroll</span><span className="pointer-fine:hidden">Pinch</span> to zoom · Tap a room

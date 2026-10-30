@@ -1,14 +1,15 @@
-import Image from "next/image";
 import { Mail, Phone } from "lucide-react";
 import EnquiryForm from "@/components/forms/EnquiryForm";
 import { Reveal } from "@/components/motion/Reveal";
 import { site } from "@/data/site";
+import WireCubes from "./WireCubes";
 
 // "Let's talk" block placed at the bottom of most pages.
 export default function ContactSection({ source, project }: { source: string; project?: string }) {
   return (
     <section id="enquire" className="relative overflow-hidden bg-navy-900 py-24 sm:py-32">
-      <Image src="/assets/images/interior-open.jpg" alt="" fill className="object-cover opacity-10" sizes="100vw" />
+      {/* Floating wireframe cubes drifting through space */}
+      <WireCubes />
       <div className="container-x relative grid gap-14 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
         <Reveal>
           <span className="eyebrow text-gold-400">Let&apos;s talk</span>

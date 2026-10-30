@@ -6,6 +6,8 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import { ImageReveal, Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import EnquiryForm from "@/components/forms/EnquiryForm";
 import Faq from "@/components/sections/Faq";
+import FeatureCards from "@/components/sections/FeatureCards";
+import BlueprintBackdrop from "@/components/sections/BlueprintBackdrop";
 import { getProject } from "@/data/projects";
 import { site, whatsappLink } from "@/data/site";
 
@@ -20,10 +22,10 @@ export const metadata: Metadata = {
 };
 
 const reasons = [
-  { icon: PencilRuler, title: "Build it your way", text: "Design a home around your family — your layout, your elevation, your timeline." },
-  { icon: TrendingUp, title: "Land appreciates", text: "Land is the part of real estate that grows in value over time, making plots a strong long-term asset." },
-  { icon: Compass, title: "Room to breathe", text: "No shared walls or floors above — private space, sunlight and greenery on every side." },
-  { icon: Landmark, title: "A lasting legacy", text: "A plot in a planned community is an asset your family can build on for generations." },
+  { icon: <PencilRuler />, title: "Build it your way", text: "Design a home around your family — your layout, your elevation, your timeline." },
+  { icon: <TrendingUp />, title: "Land appreciates", text: "Land is the part of real estate that grows in value over time, making plots a strong long-term asset." },
+  { icon: <Compass />, title: "Room to breathe", text: "No shared walls or floors above — private space, sunlight and greenery on every side." },
+  { icon: <Landmark />, title: "A lasting legacy", text: "A plot in a planned community is an asset your family can build on for generations." },
 ];
 
 const firstAccess = ["Exact location & connectivity", "Master layout plan", "Plot sizes & facings", "Launch pricing & offers", "Approval details", "Priority plot selection"];
@@ -107,18 +109,21 @@ export default function VillasPage() {
       </section>
 
       {/* Why plots */}
-      <section className="bg-white py-24 sm:py-32">
-        <div className="container-x">
-          <SectionHeading align="center" eyebrow="Why a villa plot" title="More than a home — a foundation" />
-          <Stagger className="mt-16 grid gap-px bg-navy-900/10 sm:grid-cols-2 lg:grid-cols-4">
-            {reasons.map(({ icon: Icon, title, text }) => (
-              <StaggerItem key={title} className="group bg-white p-8 transition-colors duration-500 hover:bg-navy-900">
-                <Icon className="size-9 text-gold-500" strokeWidth={1.4} />
-                <h3 className="mt-6 font-display text-2xl text-navy-900 transition-colors group-hover:text-white">{title}</h3>
-                <p className="mt-3 leading-relaxed text-muted transition-colors group-hover:text-white/70">{text}</p>
-              </StaggerItem>
-            ))}
-          </Stagger>
+      <section className="relative overflow-hidden bg-white py-24 sm:py-32">
+        <BlueprintBackdrop />
+        <div className="container-x relative">
+          <SectionHeading
+            align="center"
+            eyebrow="Why a villa plot"
+            title={
+              <>
+                More than a home — <em className="text-gold-600">a foundation</em>
+              </>
+            }
+          />
+          <div className="mt-16">
+            <FeatureCards items={reasons} />
+          </div>
         </div>
       </section>
 
