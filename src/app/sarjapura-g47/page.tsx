@@ -24,6 +24,8 @@ import LandingHero from "@/components/landing/LandingHero";
 import SectionNav from "@/components/landing/SectionNav";
 import MobileCtaBar from "@/components/landing/MobileCtaBar";
 import Faq from "@/components/sections/Faq";
+import TowersShowcase from "@/components/three/TowersShowcase";
+import FlatExplorer from "@/components/three/FlatExplorer";
 import { getProject } from "@/data/projects";
 import { site, whatsappLink } from "@/data/site";
 
@@ -54,9 +56,11 @@ const features = [
 
 const sections = [
   { id: "overview", label: "Overview" },
+  { id: "rise", label: "3D View" },
   { id: "pricing", label: "Pricing" },
   { id: "offer", label: "EOI Offer" },
   { id: "plans", label: "Plans" },
+  { id: "home-3d", label: "3D Home" },
   { id: "amenities", label: "Amenities" },
   { id: "location", label: "Location" },
   { id: "gallery", label: "Gallery" },
@@ -127,6 +131,29 @@ export default function SarjapuraG47Page() {
               </EnquireButton>
             </StaggerItem>
           </Stagger>
+        </div>
+      </section>
+
+      {/* 3D towers */}
+      <section id="rise" className="scroll-mt-32 bg-navy-950 py-24 text-white sm:py-32">
+        <div className="container-x">
+          <div className="grid items-end gap-8 lg:grid-cols-2">
+            <Reveal>
+              <span className="eyebrow text-gold-400">Watch it rise</span>
+              <h2 className="mt-4 font-display text-4xl leading-tight sm:text-5xl lg:text-6xl">
+                Two towers. <em className="text-gold-400">Forty-seven floors.</em>
+              </h2>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="text-lg leading-relaxed text-white/70">
+                See the twin G+47 towers take shape floor by floor above their landscaped podium — then watch the windows light up as evening falls
+                over Sarjapura. Explore it from every side.
+              </p>
+            </Reveal>
+          </div>
+          <Reveal delay={0.15} className="mt-14">
+            <TowersShowcase />
+          </Reveal>
         </div>
       </section>
 
@@ -255,6 +282,24 @@ export default function SarjapuraG47Page() {
               </StaggerItem>
             ))}
           </Stagger>
+        </div>
+      </section>
+
+      {/* 3D home */}
+      <section id="home-3d" className="scroll-mt-32 bg-white py-24 sm:py-32">
+        <div className="container-x">
+          <SectionHeading
+            eyebrow="Explore in 3D"
+            title={
+              <>
+                Step inside a <em className="text-gold-600">2 BHK home</em>
+              </>
+            }
+            intro="Rotate the home, zoom in, and tap any room to fly inside and see its size."
+          />
+          <Reveal className="mt-12">
+            <FlatExplorer project={PROJECT_NAME} source={source} />
+          </Reveal>
         </div>
       </section>
 
