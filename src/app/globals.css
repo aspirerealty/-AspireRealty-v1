@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/* Brand palette taken from the Aspire Ventures Realty logo. */
+@theme {
+  --color-navy-950: #051a2e;
+  --color-navy-900: #092c4c;
+  --color-navy-800: #0e3961;
+  --color-navy-700: #154a7c;
+  --color-azure-500: #2f7fd6;
+  --color-azure-100: #dcebfb;
+  --color-gold-600: #a77f3c;
+  --color-gold-500: #c49a52;
+  --color-gold-400: #d6b47a;
+  --color-gold-100: #f4ead8;
+  --color-cream: #faf7f1;
+  --color-ink: #0b1b2b;
+  --color-muted: #5b6878;
+
+  --font-display: var(--font-cormorant), "Georgia", serif;
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  scroll-behavior: auto; /* Lenis handles smooth scrolling */
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-gold-400);
+  color: var(--color-navy-950);
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-3 text-xs font-semibold tracking-[0.3em] text-gold-600 uppercase;
+  }
+
+  .eyebrow::before {
+    content: "";
+    @apply h-px w-8 bg-gold-500;
+  }
+
+  .heading-xl {
+    @apply font-display text-4xl leading-[1.05] font-medium text-navy-900 sm:text-5xl lg:text-6xl;
+  }
+
+  .heading-lg {
+    @apply font-display text-3xl leading-tight font-medium text-navy-900 sm:text-4xl lg:text-5xl;
+  }
+
+  .prose-body {
+    @apply text-base leading-relaxed text-muted sm:text-lg;
+  }
+
+  .field {
+    @apply w-full rounded-none border-0 border-b border-navy-900/20 bg-transparent px-0 py-3 text-ink placeholder:text-muted/70 transition-colors focus:border-gold-500 focus:ring-0 focus:outline-none;
+  }
+}
+
+/* Lenis recommended base styles */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
