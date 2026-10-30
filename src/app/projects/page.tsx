@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function ProjectsPage() {
   return (
     <>
-      <PageHero eyebrow="Our collaborations" title="Explore our projects" image="/assets/images/sarjapura-tower-dusk.jpg" crumbs={[{ href: "/", label: "Home" }, { label: "Projects" }]} />
+      <PageHero eyebrow="Our collaborations" title="Explore our projects" image="/assets/images/skyline.jpg" crumbs={[{ href: "/", label: "Home" }, { label: "Projects" }]} />
 
       <section className="py-24 sm:py-32">
         <div className="container-x">

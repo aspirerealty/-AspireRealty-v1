@@ -345,3 +345,66 @@ html.lenis body {
     transition: none;
   }
 }
+
+/* ───────────── Floor picker slider ───────────── */
+.floor-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.floor-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--color-gold-600), var(--color-gold-400) var(--fill), rgb(9 44 76 / 0.12) var(--fill));
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.15);
+}
+
+.floor-range::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--color-gold-600), var(--color-gold-400) var(--fill), rgb(9 44 76 / 0.12) var(--fill));
+}
+
+.floor-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 30%, #fff, var(--color-gold-400) 45%, var(--color-gold-600));
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 4px rgb(196 154 82 / 0.25), 0 4px 10px rgb(9 44 76 / 0.35);
+  transition: transform 0.2s var(--ease-luxe), box-shadow 0.2s;
+}
+
+.floor-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 30%, #fff, var(--color-gold-400) 45%, var(--color-gold-600));
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 4px rgb(196 154 82 / 0.25), 0 4px 10px rgb(9 44 76 / 0.35);
+}
+
+.floor-range:hover::-webkit-slider-thumb,
+.floor-range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 7px rgb(196 154 82 / 0.3), 0 4px 12px rgb(9 44 76 / 0.4);
+}
+
+/* Slow push-in on the playing hero clip */
+.hero-clip {
+  transform: scale(1.04);
+}
+.hero-clip.is-active {
+  animation: hero-push 7s linear both;
+}
+@keyframes hero-push {
+  from { transform: scale(1.04); }
+  to { transform: scale(1.14); }
+}

@@ -49,7 +49,7 @@ export const projects: Project[] = [
     summary:
       "The next big address in Sarjapura — two G+47 signature towers on Sarjapura Main Road, right opposite DMart, with 80% open space and 50+ amenities.",
     cover: "/assets/images/sarjapura-tower.jpg",
-    heroImage: "/assets/images/sarjapura-tower-dusk.jpg",
+    heroImage: "/assets/images/skyline.jpg", // TODO: high-res render from the developer
     gallery: [
       { src: "/assets/images/sarjapura-tower.jpg", alt: "Tower crown lit at dusk" },
       { src: "/assets/images/sarjapura-facade.jpg", alt: "Landscaped balconies with warm façade lighting" },

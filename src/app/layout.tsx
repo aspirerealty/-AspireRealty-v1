@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: site.name,
-    images: ["/assets/images/sarjapura-tower-dusk.jpg"],
+    images: ["/assets/images/sarjapura-poster-2.jpg"],
   },
 };
 

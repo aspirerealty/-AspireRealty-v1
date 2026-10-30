@@ -21,10 +21,17 @@ export default function LandingHero({ name, partner, source }: { name: string; p
 
   return (
     <section ref={ref} className="relative min-h-svh overflow-hidden bg-gradient-to-b from-[#2b4f7d] via-[#b98a6a] to-[#f0b27a]">
-      {/* Tower artwork from the launch poster, pinned right and parallaxed */}
-      <motion.div style={{ y: towerY }} className="absolute inset-y-0 right-0 w-full sm:w-[62%] lg:w-[48%]">
-        <motion.div initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6 }} className="absolute inset-0">
-          <Image src="/assets/images/sarjapura-tower-dusk.jpg" alt="" fill priority sizes="(min-width: 1024px) 48vw, 100vw" className="object-cover object-top" />
+      {/* Blurred copy of the tower image so the backdrop matches its sky */}
+      <Image src="/assets/images/sarjapura-tower-tall.jpg" alt="" fill sizes="10vw" className="scale-125 object-cover opacity-80 blur-3xl" />
+      {/* Tower from the launch poster, shown near its native size so it stays sharp */}
+      <motion.div style={{ y: towerY }} className="absolute right-[6%] bottom-0 h-[94%] [aspect-ratio:340/1470] sm:right-[12%] lg:right-[16%]">
+        <motion.div
+          initial={{ opacity: 0, y: 80 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.6 }}
+          className="absolute inset-0 [mask-image:linear-gradient(90deg,transparent,black_20%,black_80%,transparent)]"
+        >
+          <Image src="/assets/images/sarjapura-tower-tall.jpg" alt="" fill priority sizes="(min-width: 1024px) 18vw, 40vw" className="object-cover" />
         </motion.div>
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-r from-navy-950/95 via-navy-950/75 to-navy-950/10" />

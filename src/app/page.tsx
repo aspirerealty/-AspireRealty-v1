@@ -37,7 +37,7 @@ export default function Home() {
         <div className="container-x grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
           <div className="relative">
             <ImageReveal className="relative aspect-[4/5] overflow-hidden">
-              <Image src="/assets/images/sarjapura-facade.jpg" alt="Warmly lit balconies with landscaped planters" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+              <Image src="/assets/images/apartment-facade.jpg" alt="Modern residential tower with balconies" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
             </ImageReveal>
             <Reveal delay={0.3} className="absolute -right-4 -bottom-8 hidden w-56 bg-navy-900 p-6 text-white shadow-2xl sm:block lg:-right-10">
               <p className="font-display text-5xl text-gold-400">

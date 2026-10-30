@@ -1,6 +1,6 @@
 "use client";
 
-import BlueprintMotion from "./BlueprintMotion";
+import HeroVideo from "./HeroVideo";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ChevronDown } from "lucide-react";
@@ -18,10 +18,10 @@ export default function Hero() {
   return (
     <section ref={ref} className="relative flex min-h-svh items-center overflow-hidden bg-navy-950">
       <motion.div style={{ y: imageY }} className="absolute inset-0">
-        {/* "From blueprint to building" motion background */}
-        <BlueprintMotion />
+        {/* Cinematic video: design → model → city → delivery */}
+        <HeroVideo />
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/55 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/60 to-navy-950/10" />
       <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-transparent to-navy-950/40" />
 
       <motion.div style={{ y: textY, opacity: fade }} className="container-x relative pt-28 pb-24">
