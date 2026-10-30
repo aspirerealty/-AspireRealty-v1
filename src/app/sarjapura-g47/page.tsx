@@ -156,6 +156,13 @@ export default function SarjapuraG47Page() {
           <Reveal delay={0.15} className="mt-14">
             <TowersShowcase />
           </Reveal>
+          <Reveal delay={0.2} className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm text-muted">
+            <p>
+              <span className="font-semibold text-gold-600">EOI offer</span> · The first 200 customers can choose any floor with no floor rise
+              charges.
+            </p>
+            <p className="text-xs">Illustrative 3D model · not to scale</p>
+          </Reveal>
         </div>
       </section>
 

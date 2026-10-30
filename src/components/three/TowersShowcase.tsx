@@ -5,7 +5,8 @@ import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Moon, MousePointer2, RotateCcw, Sun, X } from "lucide-react";
 import BrandLoader from "@/components/brand/BrandLoader";
-import { FLOORS, HOTSPOT_INFO, METRES_PER_FLOOR, type HotspotId } from "./towers-data";
+import { FLOORS, HOTSPOT_INFO, type HotspotId } from "./towers-data";
+import FloorRail from "./FloorRail";
 import { useNearViewport } from "./useNearViewport";
 
 const TowersScene = dynamic(() => import("./TowersScene"), {
@@ -31,8 +32,6 @@ export default function TowersShowcase() {
   const [pickedFloor, setPickedFloor] = useState<number | null>(null);
   const [hotspot, setHotspot] = useState<HotspotId | null>(null);
   const toppedOut = floor === FLOORS;
-  const floorValue = pickedFloor ?? 24;
-  const zone = floorValue <= 12 ? "Lower floors" : floorValue <= 26 ? "Mid floors" : floorValue <= 40 ? "High floors" : "Sky floors";
 
   // Frosted panels: white by day, dark at night.
   const glass = night
@@ -156,63 +155,22 @@ export default function TowersShowcase() {
         )}
       </AnimatePresence>
 
-      {/* Floor picker — a laminated glass card with a gold edge */}
+      {/* Floor selector: a slim vertical "lift" rail on the right edge */}
       <AnimatePresence>
         {toppedOut && (
           <motion.div
-            initial={{ opacity: 0, y: 40, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 30 }}
-            transition={{ delay: 1.2, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-x-4 bottom-4 z-20 mx-auto max-w-2xl rounded-2xl bg-gradient-to-br from-gold-400/90 via-white/40 to-gold-600/70 p-px shadow-[0_24px_60px_-20px_rgba(9,44,76,0.55)] sm:bottom-6"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 40 }}
+            transition={{ delay: 1.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute top-[4.5rem] right-4 bottom-14 z-20 flex sm:top-20 sm:right-6"
           >
-            <div
-              className={`relative overflow-hidden rounded-[15px] px-5 py-4 backdrop-blur-xl sm:px-7 sm:py-5 ${
-                night ? "bg-navy-950/70 text-white" : "bg-white/80 text-navy-900"
-              }`}
-            >
-              {/* glossy laminate sheen */}
-              <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/50 to-transparent opacity-60" />
-              <div className="relative flex items-center gap-5 sm:gap-7">
-                <div className="shrink-0 text-center">
-                  <p className="text-[0.6rem] font-bold tracking-[0.3em] text-gold-600 uppercase">Floor</p>
-                  <p className="font-display text-5xl leading-none tabular-nums sm:text-6xl">{String(floorValue).padStart(2, "0")}</p>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <p className="text-[0.65rem] font-bold tracking-[0.28em] text-gold-600 uppercase">Pick your floor</p>
-                    <p className={`text-xs tabular-nums ${soft}`}>
-                      <span className="font-semibold text-gold-600">{zone}</span> · ≈ {Math.round(floorValue * METRES_PER_FLOOR)} m up
-                    </p>
-                  </div>
-                  <input
-                    type="range"
-                    min={1}
-                    max={FLOORS}
-                    value={floorValue}
-                    onChange={(e) => setPickedFloor(Number(e.target.value))}
-                    aria-label="Floor"
-                    className="floor-range mt-3 outline-none"
-                    style={{ "--fill": `${((floorValue - 1) / (FLOORS - 1)) * 100}%` } as React.CSSProperties}
-                  />
-                  <div className={`mt-1.5 flex justify-between text-[10px] tabular-nums ${soft}`}>
-                    {[1, 10, 20, 30, 40, 47].map((n) => (
-                      <button key={n} type="button" onClick={() => setPickedFloor(n)} className="hover:text-gold-600">
-                        {n}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <p className={`relative mt-3 border-t pt-3 text-xs ${night ? "border-white/10" : "border-navy-900/10"} ${soft}`}>
-                <span className="font-semibold text-gold-600">EOI offer</span> · The first 200 customers can choose any floor with no floor rise charges.
-              </p>
-            </div>
+            <FloorRail value={pickedFloor} onChange={setPickedFloor} night={night} />
           </motion.div>
         )}
       </AnimatePresence>
 
-      <p className={`pointer-events-none absolute right-6 bottom-6 hidden items-center gap-1.5 text-[11px] lg:flex ${night ? "text-white/50" : "text-navy-900/50"}`}>
+      <p className={`pointer-events-none absolute left-6 bottom-5 hidden items-center gap-1.5 text-[11px] lg:flex ${night ? "text-white/50" : "text-navy-900/50"}`}>
         <MousePointer2 className="size-3" /> Drag to orbit · Illustrative 3D model
       </p>
     </div>

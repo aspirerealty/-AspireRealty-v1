@@ -797,7 +797,7 @@ function CameraDirector({ clockRef, built, touch }: { clockRef: ClockRef; built:
 }
 
 // Moves the DOM annotations so they sit over their 3D positions, hiding any
-// that would land behind the floor-picker panel at the bottom.
+// that would land behind the floor rail on the right.
 function HotspotProjector({ hotspotsRef, visible }: { hotspotsRef: RefObject<(HTMLElement | null)[]>; visible: boolean }) {
   const { camera, size, scene } = useThree();
   const points = useMemo(() => HOTSPOT_INFO.map((h) => new THREE.Vector3(...HOTSPOT_POS[h.id])), []);
@@ -805,7 +805,7 @@ function HotspotProjector({ hotspotsRef, visible }: { hotspotsRef: RefObject<(HT
 
   useFrame(() => {
     const spin = scene.getObjectByName(SPIN_NAME);
-    const panelTop = size.height - (size.width < 640 ? 210 : 230);
+    const railLeft = size.width - (size.width < 640 ? 130 : 150);
     points.forEach((p, i) => {
       const el = hotspotsRef.current[i];
       if (!el) return;
@@ -814,7 +814,7 @@ function HotspotProjector({ hotspotsRef, visible }: { hotspotsRef: RefObject<(HT
       projected.project(camera);
       const x = (projected.x * 0.5 + 0.5) * size.width;
       const y = (-projected.y * 0.5 + 0.5) * size.height;
-      const show = visible && projected.z < 1 && y < panelTop && y > 40;
+      const show = visible && projected.z < 1 && x < railLeft && y > 40 && y < size.height - 30;
       el.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
       el.style.opacity = show ? "1" : "0";
       el.style.pointerEvents = show ? "auto" : "none";

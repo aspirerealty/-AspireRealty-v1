@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { Download } from "lucide-react";
 import EnquireButton from "@/components/forms/EnquireButton";
+import PosterStack from "./PosterStack";
 
 const chips = [
   { value: "G + 47", label: "Floors" },
@@ -16,28 +17,18 @@ const chips = [
 export default function LandingHero({ name, partner, source }: { name: string; partner: string; source: string }) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const towerY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+  const postersY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
 
   return (
-    <section ref={ref} className="relative min-h-svh overflow-hidden bg-gradient-to-b from-[#2b4f7d] via-[#b98a6a] to-[#f0b27a]">
-      {/* Blurred copy of the tower image so the backdrop matches its sky */}
-      <Image src="/assets/images/sarjapura-tower-tall.jpg" alt="" fill sizes="10vw" className="scale-125 object-cover opacity-80 blur-3xl" />
-      {/* Tower from the launch poster, shown near its native size so it stays sharp */}
-      <motion.div style={{ y: towerY }} className="absolute right-[6%] bottom-0 h-[94%] [aspect-ratio:340/1470] sm:right-[12%] lg:right-[16%]">
-        <motion.div
-          initial={{ opacity: 0, y: 80 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.6 }}
-          className="absolute inset-0 [mask-image:linear-gradient(90deg,transparent,black_20%,black_80%,transparent)]"
-        >
-          <Image src="/assets/images/sarjapura-tower-tall.jpg" alt="" fill priority sizes="(min-width: 1024px) 18vw, 40vw" className="object-cover" />
-        </motion.div>
-      </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-r from-navy-950/95 via-navy-950/75 to-navy-950/10" />
+    <section ref={ref} className="relative min-h-svh overflow-hidden bg-navy-950">
+      {/* Ambient backdrop: the poster itself, heavily blurred */}
+      <Image src="/assets/images/sarjapura-poster-2.jpg" alt="" fill sizes="10vw" className="scale-125 object-cover opacity-60 blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/85 to-navy-950/40" />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-navy-950 to-transparent" />
 
-      <motion.div style={{ y: textY }} className="container-x relative flex min-h-svh flex-col justify-center pt-32 pb-20">
+      <div className="container-x relative grid min-h-svh items-center gap-16 pt-32 pb-24 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
+      <motion.div style={{ y: textY }} className="flex flex-col justify-center">
         <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.8 }} className="flex flex-wrap items-center gap-3">
           <span className="bg-gold-500 px-3 py-1 text-[0.65rem] font-bold tracking-[0.25em] text-navy-950 uppercase">EOI Open</span>
           <span className="text-xs font-semibold tracking-[0.3em] text-white/70 uppercase">In collaboration with {partner}</span>
@@ -47,7 +38,7 @@ export default function LandingHero({ name, partner, source }: { name: string; p
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 1 }}
-          className="mt-6 font-display text-6xl leading-[0.95] font-medium text-white sm:text-7xl lg:text-8xl"
+          className="mt-6 font-display text-6xl leading-[0.95] font-medium text-white sm:text-7xl xl:text-8xl"
         >
           {name}
         </motion.h1>
@@ -94,6 +85,12 @@ export default function LandingHero({ name, partner, source }: { name: string; p
           Sarjapura Main Road · Opposite DMart · RERA: Coming soon
         </motion.p>
       </motion.div>
+
+      {/* The real launch posters */}
+      <motion.div style={{ y: postersY }} className="pb-10 lg:pb-0">
+        <PosterStack />
+      </motion.div>
+      </div>
     </section>
   );
 }
