@@ -13,7 +13,7 @@ import FeatureCards from "@/components/sections/FeatureCards";
 import BlueprintBackdrop from "@/components/sections/BlueprintBackdrop";
 import CubeWall from "@/components/three/CubeWall";
 import ContactSection from "@/components/sections/ContactSection";
-import { getProject, projects } from "@/data/projects";
+import { getProject, projects, projectsIn } from "@/data/projects";
 import { blogs } from "@/data/blogs";
 import { faqs } from "@/data/faqs";
 import { stats } from "@/data/site";
@@ -36,10 +36,10 @@ export default function Home() {
       <section id="about" className="py-24 sm:py-32">
         <div className="container-x grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
           <div className="relative">
-            <ImageReveal className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/11] lg:aspect-[4/5]">
-              <Image src="/assets/images/apartment-facade.jpg" alt="Modern residential tower with balconies" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+            <ImageReveal className="relative aspect-[595/402] overflow-hidden">
+              <Image src="/assets/images/g47-closer-to-the-moon.jpg" alt="A little closer to the moon — the view from the upper floors" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
             </ImageReveal>
-            <Reveal delay={0.3} className="absolute -right-4 -bottom-8 hidden w-56 bg-navy-900 p-6 text-white shadow-2xl sm:block lg:-right-10">
+            <Reveal delay={0.3} className="absolute -bottom-10 -left-4 hidden w-56 bg-navy-900 p-6 text-white shadow-2xl sm:block lg:-left-10">
               <p className="font-display text-5xl text-gold-400">
                 <Counter value={47} prefix="G+" />
               </p>
@@ -153,23 +153,35 @@ export default function Home() {
       {/* Interactive cube wall */}
       <CubeWall />
 
-      {/* Referral teaser */}
+      {/* Apartments & villas */}
       <section className="py-24 sm:py-32">
         <div className="container-x">
-          <Reveal className="relative grid overflow-hidden bg-gold-100 md:grid-cols-2">
-            <div className="relative min-h-72">
-              <Image src="/assets/images/home-keys.jpg" alt="House keys on a table" fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
-            </div>
-            <div className="p-8 sm:p-14">
-              <span className="eyebrow">Refer &amp; earn</span>
-              <h2 className="mt-4 font-display text-4xl text-navy-900 sm:text-5xl">Know someone looking for a home?</h2>
-              <p className="mt-4 text-muted">Refer friends and family to any of our projects and earn rewards on every successful booking.</p>
-              <Link href="/referral/" className="group mt-8 inline-flex items-center gap-2 font-semibold text-navy-900">
-                Know more
-                <ArrowUpRight className="size-4 text-gold-600 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Link>
-            </div>
-          </Reveal>
+          <SectionHeading align="center" eyebrow="Find your home" title="Apartments or villas?" />
+          <Stagger className="mt-14 grid gap-6 md:grid-cols-2">
+            {[
+              { href: "/apartments/", label: "Apartments", text: "High-rise living off Sarjapur Road — 2 & 3 BHK homes with world-class amenities.", image: "/assets/projects/engrace-vista/towers.jpg", count: projectsIn("apartment").length },
+              { href: "/villas/", label: "Villas", text: "Independent 4 & 5 BHK villas with private elevators and room to grow.", image: "/assets/projects/soulace/avenue.jpg", count: projectsIn("villa").length },
+            ].map((c) => (
+              <StaggerItem key={c.href}>
+                <Link href={c.href} className="group relative block aspect-[16/10] overflow-hidden bg-navy-900">
+                  <Image src={c.image} alt="" fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover transition-transform duration-[1.4s] ease-luxe group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/30 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 p-6 text-white sm:p-8">
+                    <div>
+                      <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-gold-400 uppercase">
+                        {c.count} {c.count === 1 ? "project" : "projects"}
+                      </p>
+                      <h3 className="mt-2 font-display text-4xl sm:text-5xl">{c.label}</h3>
+                      <p className="mt-2 max-w-sm text-sm text-white/75">{c.text}</p>
+                    </div>
+                    <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white/10 backdrop-blur transition-all duration-500 group-hover:rotate-45 group-hover:bg-gold-500 group-hover:text-navy-950">
+                      <ArrowUpRight className="size-5" />
+                    </span>
+                  </div>
+                </Link>
+              </StaggerItem>
+            ))}
+          </Stagger>
         </div>
       </section>
 

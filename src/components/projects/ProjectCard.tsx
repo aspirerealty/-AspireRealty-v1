@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, MapPin } from "lucide-react";
-import { type Project, statusLabels } from "@/data/projects";
+import { type Project, categoryLabels } from "@/data/projects";
 
 export default function ProjectCard({ project }: { project: Project }) {
   return (
@@ -9,15 +9,15 @@ export default function ProjectCard({ project }: { project: Project }) {
       <div className="relative aspect-[4/5] overflow-hidden bg-navy-900">
         <Image
           src={project.cover}
-          alt={`${project.type} in ${project.location}`}
+          alt={`${project.name} — ${project.type}`}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           className="object-cover transition-transform duration-[1.4s] ease-luxe group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/95 via-navy-950/20 to-transparent" />
-        <div className="absolute top-5 left-5 flex gap-2">
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/95 via-navy-950/25 to-navy-950/10" />
+        <div className="absolute top-5 left-5 flex flex-wrap gap-2 pr-16">
           <span className="bg-white/90 px-3 py-1 text-[0.65rem] font-bold tracking-[0.2em] text-navy-900 uppercase backdrop-blur">
-            {statusLabels[project.status]}
+            {categoryLabels[project.category]}
           </span>
           {project.badge && (
             <span className="bg-gold-500 px-3 py-1 text-[0.65rem] font-bold tracking-[0.2em] text-navy-950 uppercase">{project.badge}</span>
@@ -28,15 +28,22 @@ export default function ProjectCard({ project }: { project: Project }) {
         </span>
 
         <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-          <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-gold-400 uppercase">In collaboration with</p>
-          <h3 className="mt-2 font-display text-3xl leading-tight">{project.partner}</h3>
+          <div className="flex items-center gap-2.5">
+            <span className="text-[0.6rem] font-semibold tracking-[0.25em] text-white/65 uppercase">In collaboration with</span>
+            <Image src={project.developer.logoWhite} alt={project.developer.name} width={640} height={655} className="h-8 w-auto" />
+          </div>
+          {project.logo ? (
+            <Image src={project.logo.white} alt={project.name} width={640} height={480} className="mt-3 h-12 w-auto max-w-[70%] object-contain object-left" />
+          ) : (
+            <h3 className="mt-3 font-display text-3xl leading-tight">{project.name}</h3>
+          )}
           <p className="mt-2 text-sm text-white/80">{project.type}</p>
           <div className="mt-4 flex items-center justify-between gap-4 border-t border-white/15 pt-4 text-sm">
             <span className="flex items-center gap-1.5 text-white/70">
               <MapPin className="size-4 shrink-0 text-gold-400" />
               {project.locality}
             </span>
-            <span className="font-semibold text-gold-400">{project.startingPrice ?? "Express interest"}</span>
+            <span className="font-semibold whitespace-nowrap text-gold-400">{project.startingPrice ?? "Express interest"}</span>
           </div>
         </div>
       </div>

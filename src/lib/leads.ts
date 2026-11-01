@@ -13,8 +13,6 @@ export type Lead = {
   message?: string;
   reason?: string;
   project?: string;
-  referrerName?: string;
-  referrerPhone?: string;
   source: string;
   website?: string; // honeypot — real users leave this empty
 };

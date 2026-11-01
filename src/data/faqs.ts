@@ -9,7 +9,7 @@ export const faqs = [
   },
   {
     q: "What does an EOI (Expression of Interest) mean?",
-    a: "An EOI lets you register early for a project before or at launch. Early registrants usually get priority unit selection and launch-only benefits such as waived floor rise charges.",
+    a: "An EOI lets you register early for a project before or at launch. Early registrants usually get priority unit selection and launch-only benefits such as No FRC (Floor Rise Charges).",
   },
   {
     q: "Are your projects RERA registered?",

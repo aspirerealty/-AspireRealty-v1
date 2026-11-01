@@ -11,11 +11,11 @@ export const site = {
   phone: "+91 97439 15259", // TODO: confirm the calling number (currently the WhatsApp ad number)
   phoneHref: "tel:+919743915259",
   whatsapp: "919743915259", // international format, digits only
-  email: "hello@aspireventuresrealty.com", // TODO
+  email: "aspirerealty001@gmail.com",
   address: {
-    line1: "Office address line 1", // TODO
-    line2: "Sarjapura Road, Bengaluru, Karnataka 562125", // TODO
-    mapQuery: "Sarjapura Road, Bengaluru", // TODO: exact office address for the map
+    line1: "Hongasandra",
+    line2: "Bengaluru, Karnataka 560068",
+    mapQuery: "Hongasandra, Bengaluru 560068",
   },
   hours: "Mon – Sun, 10:00 AM – 7:00 PM",
   rera: "RERA registration details will appear here.", // TODO
@@ -33,10 +33,9 @@ export const site = {
 export const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about/", label: "About" },
-  { href: "/projects/", label: "Projects" },
+  { href: "/apartments/", label: "Apartments" },
   { href: "/villas/", label: "Villas" },
   { href: "/blogs/", label: "Insights" },
-  { href: "/referral/", label: "Refer & Earn" },
   { href: "/contact/", label: "Contact" },
 ] as const;
 
@@ -46,7 +45,7 @@ export const stats = [
   { value: 47, prefix: "G+", label: "Floors on Sarjapura Main Road" },
   { value: 80, suffix: "%", label: "Open space" },
   { value: 50, suffix: "+", label: "Lifestyle amenities" },
-  { value: 200, label: "EOI customers get No FRC" },
+  { value: 200, label: "EOI customers get No FRC (Floor Rise Charges)" },
 ];
 
 export function whatsappLink(message = "Hi, I'd like to know more about your projects.") {

@@ -5,6 +5,8 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { Download } from "lucide-react";
 import EnquireButton from "@/components/forms/EnquireButton";
+import CollabBadge from "@/components/projects/CollabBadge";
+import type { Developer } from "@/data/projects";
 import PosterStack from "./PosterStack";
 
 const chips = [
@@ -14,7 +16,7 @@ const chips = [
   { value: "₹1.10 Cr", label: "Onwards" },
 ];
 
-export default function LandingHero({ name, partner, source }: { name: string; partner: string; source: string }) {
+export default function LandingHero({ name, developer, source }: { name: string; developer: Developer; source: string }) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const postersY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
@@ -29,10 +31,10 @@ export default function LandingHero({ name, partner, source }: { name: string; p
 
       <div className="container-x relative grid min-h-svh items-center gap-16 pt-32 pb-24 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
       <motion.div style={{ y: textY }} className="flex flex-col justify-center">
-        <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.8 }} className="flex flex-wrap items-center gap-3">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.8 }} className="flex flex-wrap items-center gap-4">
           <span className="bg-gold-500 px-3 py-1 text-[0.65rem] font-bold tracking-[0.25em] text-navy-950 uppercase">EOI Open</span>
-          <span className="text-xs font-semibold tracking-[0.3em] text-white/70 uppercase">In collaboration with {partner}</span>
-        </motion.p>
+          <CollabBadge developer={developer} tone="dark" size="sm" />
+        </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 40 }}

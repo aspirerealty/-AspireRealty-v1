@@ -62,6 +62,31 @@ export const twoBhk: FlatLayout = {
   ],
 };
 
+// Illustrative 3 BHK: the 2 BHK plan plus a third bedroom suite (bedroom,
+// dressing and attached toilet) on the right; the main door moves to the
+// dining side.
+export const threeBhk: FlatLayout = {
+  id: "3bhk",
+  label: "3 BHK",
+  rooms: [
+    ...twoBhk.rooms,
+    { id: "bed3", name: "Bedroom 3", type: "bedroom", x: 10, z: 0, w: 3.2, d: 4.6, blurb: "Third bedroom suite with its own dressing area and attached toilet." },
+    { id: "dress3", name: "Dressing 3", type: "passage", x: 10, z: 4.6, w: 3.2, d: 1.4, blurb: "Dressing area for bedroom 3." },
+    { id: "toilet3", name: "Toilet 3", type: "wet", x: 10, z: 6.0, w: 3.2, d: 2.0, blurb: "Attached toilet for bedroom 3." },
+  ],
+  openings: [
+    ...twoBhk.openings.filter((o) => !(o.axis === "z" && o.at === 10)), // the 2 BHK main door becomes the bedroom 3 door
+    { axis: "z", at: 10, center: 3.8, width: 0.9 }, // foyer ↔ bedroom 3
+    { axis: "z", at: 0, center: 3.9, width: 1.0 }, // main entrance (dining side)
+    { axis: "x", at: 4.6, center: 11.0, width: 0.9 }, // bedroom 3 ↔ dressing
+    { axis: "x", at: 6.0, center: 12.4, width: 0.75 }, // dressing ↔ toilet 3
+    { axis: "x", at: 0, center: 11.6, width: 1.4, kind: "window" }, // bedroom 3
+    { axis: "x", at: 8, center: 12.4, width: 0.6, kind: "window" }, // toilet 3
+  ],
+};
+
+export const LAYOUTS = [twoBhk, threeBhk];
+
 export const toFeet = (m: number) => {
   const totalInches = Math.round(m * 39.3701);
   return `${Math.floor(totalInches / 12)}'${totalInches % 12}"`;

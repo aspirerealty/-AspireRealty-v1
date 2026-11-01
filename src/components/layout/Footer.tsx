@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { navLinks, site } from "@/data/site";
-import { projects } from "@/data/projects";
+import { categoryLabels, projects } from "@/data/projects";
 import SocialIcons from "@/components/ui/SocialIcons";
 
 export default function Footer() {
@@ -41,7 +41,7 @@ export default function Footer() {
             {projects.slice(0, 5).map((p) => (
               <li key={p.slug}>
                 <Link href={p.page} className="transition-colors hover:text-white">
-                  {p.type.split(" · ")[0]} · {p.locality}
+                  {p.name} · {categoryLabels[p.category]}
                 </Link>
               </li>
             ))}

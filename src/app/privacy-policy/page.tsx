@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
         {
           heading: "Information we collect",
           body: [
-            "When you submit an enquiry, referral or EOI form, we collect the details you provide — such as your name, mobile number, email address and message — along with the page you submitted it from.",
+            "When you submit an enquiry or EOI form, we collect the details you provide — such as your name, mobile number, email address and message — along with the page you submitted it from.",
           ],
         },
         {

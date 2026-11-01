@@ -84,7 +84,7 @@ export default function FlatScene({ layout, active, selected, onSelect }: Props)
               <RoomFloor key={room.id} room={room} selected={selected === room.id} onSelect={onSelect} />
             ))}
             <Walls layout={layout} />
-            <Furnishings />
+            <Furnishings layoutId={layout.id} />
           </group>
 
           <ContactShadows position={[0, -0.32, 0]} opacity={0.35} scale={30} blur={2.8} far={5} color="#2a2420" />
@@ -528,8 +528,9 @@ function Shower({ w, d, mats }: { w: number; d: number; mats: Mats }) {
 
 const PI = Math.PI;
 
-// Furniture for the illustrative 2 BHK (plan coordinates in metres).
-function Furnishings() {
+// Furniture for the illustrative layouts (plan coordinates in metres). The
+// 3 BHK shares the 2 BHK rooms and adds a bedroom 3 suite on the right.
+function Furnishings({ layoutId }: { layoutId: string }) {
   const mats = useMaterials();
   const M = MODELS;
   return (
@@ -625,6 +626,37 @@ function Furnishings() {
       {/* ── Balcony ── */}
       <Model url={M.outdoorSet} pos={[4.1, 0, -0.8]} rot={PI / 2} />
       <Model url={M.plant} pos={[0.5, 0, -1.15]} />
+
+      {layoutId === "3bhk" && (
+        <group>
+          {/* ── Bedroom 3 suite ── */}
+          <Bx size={[2.3, 0.012, 2.2]} pos={[11.95, 0.016, 2.3]} mat={mats.rug} r={0.004} />
+          <At pos={[12.1, 0, 2.3]} rot={-PI / 2}>
+            <Bed w={1.6} l={1.95} mats={mats} frame={mats.velvetOlive} />
+          </At>
+          <Model url={M.sideTable} pos={[12.85, 0, 1.05]} />
+          <Model url={M.sideTable} pos={[12.85, 0, 3.55]} />
+          <Model url={M.succulent} pos={[12.85, 0.55, 3.55]} scale={1.2} />
+          <At pos={[10.35, 0, 1.4]} rot={PI / 2}>
+            <Wardrobe w={2.2} d={0.55} mats={mats} />
+          </At>
+          <At pos={[10.37, 0, 5.3]} rot={PI / 2}>
+            <Wardrobe w={1.2} d={0.5} mats={mats} />
+          </At>
+          <At pos={[12.88, 0, 5.3]} rot={-PI / 2}>
+            <Wardrobe w={1.2} d={0.5} mats={mats} />
+          </At>
+          <At pos={[10.62, 0, 7.15]}>
+            <Shower w={1.1} d={1.6} mats={mats} />
+          </At>
+          <At pos={[11.7, 0, 7.62]} rot={PI}>
+            <Wc mats={mats} />
+          </At>
+          <At pos={[12.75, 0, 7.7]} rot={PI}>
+            <Vanity mats={mats} />
+          </At>
+        </group>
+      )}
     </group>
   );
 }

@@ -38,7 +38,7 @@ const project = getProject("sarjapura-g47")!;
 export const metadata: Metadata = {
   title: `${PROJECT_NAME} — 2 & 3 BHK on Sarjapura Main Road | EOI Open`,
   description:
-    "G+47 floors, 2 signature towers, 2 & 3 BHK homes from ₹1.10 Cr on Sarjapura Main Road, opposite DMart. 80% open space, 50+ amenities. EOI now open — No FRC for the first 200 customers.",
+    "G+47 floors, 2 signature towers, 2 & 3 BHK homes from ₹1.10 Cr on Sarjapura Main Road, opposite DMart. 80% open space, 50+ amenities. EOI now open — No FRC (Floor Rise Charges) for the first 200 customers.",
 };
 
 const features = [
@@ -70,11 +70,11 @@ const sections = [
 const landingFaqs = [
   {
     q: "What is the EOI and why should I register now?",
-    a: "The Expression of Interest (EOI) lets you register before the official launch. EOI customers get priority access to launch information, configurations and introductory pricing — and the first 200 customers get No FRC and their choice of floor.",
+    a: "The Expression of Interest (EOI) lets you register before the official launch. EOI customers get priority access to launch information, configurations and introductory pricing — and the first 200 customers get No FRC (Floor Rise Charges) and their choice of floor.",
   },
   {
     q: "What are the apartment sizes and prices?",
-    a: "2 BHK homes range from 1,100 – 1,200 sq. ft., starting at ₹1.10 Cr. 3 BHK homes range from 1,350 – 1,500 sq. ft., priced at ₹1.30 – 1.50 Cr. Request the price breakup for a detailed cost sheet.",
+    a: "2 BHK homes are 1,100 – 1,200 sq. ft. (super built-up), starting at ₹1.10 Cr. 3 BHK homes are 1,350 – 1,500 sq. ft. (super built-up), priced at ₹1.30 – 1.50 Cr. Request the price breakup for a detailed cost sheet.",
   },
   {
     q: "Where exactly is the project?",
@@ -95,7 +95,7 @@ const goldBtn =
 export default function SarjapuraG47Page() {
   return (
     <>
-      <LandingHero name={PROJECT_NAME} partner={project.partner} source={source} />
+      <LandingHero name={PROJECT_NAME} developer={project.developer} source={source} />
       <SectionNav sections={sections} />
 
       {/* Overview */}
@@ -158,8 +158,8 @@ export default function SarjapuraG47Page() {
           </Reveal>
           <Reveal delay={0.2} className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm text-muted">
             <p>
-              <span className="font-semibold text-gold-600">EOI offer</span> · The first 200 customers can choose any floor with no floor rise
-              charges.
+              <span className="font-semibold text-gold-600">EOI offer</span> · The first 200 customers can choose any floor with No FRC (Floor Rise
+              Charges).
             </p>
             <p className="text-xs">Illustrative 3D model · not to scale</p>
           </Reveal>
@@ -175,7 +175,8 @@ export default function SarjapuraG47Page() {
             {project.units.map((u) => (
               <StaggerItem key={u.config} className="border border-navy-900/10 bg-cream p-6">
                 <p className="font-display text-3xl text-navy-900">{u.config}</p>
-                <p className="mt-1 text-muted">{u.size}</p>
+                <p className="mt-1 text-sm text-muted">Super built-up: {u.sbua}</p>
+                {u.carpet && <p className="text-sm text-muted">Carpet: {u.carpet}</p>}
                 <p className="mt-3 text-xl font-semibold text-navy-900">{u.price}</p>
                 <EnquireButton title={`${u.config} price breakup`} reason={`Price breakup — ${u.config}`} project={PROJECT_NAME} source={source} className={`${outlineBtn} mt-5 w-full`}>
                   Price breakup
@@ -188,7 +189,8 @@ export default function SarjapuraG47Page() {
               <thead>
                 <tr className="border-b-2 border-navy-900 text-xs tracking-[0.2em] text-muted uppercase">
                   <th className="py-4 pr-4 font-semibold">Configuration</th>
-                  <th className="py-4 pr-4 font-semibold">Size</th>
+                  <th className="py-4 pr-4 font-semibold">Super built-up area</th>
+                  <th className="py-4 pr-4 font-semibold">Carpet area</th>
                   <th className="py-4 pr-4 font-semibold">Price</th>
                   <th className="py-4" />
                 </tr>
@@ -197,7 +199,8 @@ export default function SarjapuraG47Page() {
                 {project.units.map((u) => (
                   <tr key={u.config} className="border-b border-navy-900/10">
                     <td className="py-7 pr-4 font-display text-3xl text-navy-900">{u.config}</td>
-                    <td className="py-7 pr-4 text-muted">{u.size}</td>
+                    <td className="py-7 pr-4 text-muted">{u.sbua}</td>
+                    <td className="py-7 pr-4 text-muted">{u.carpet ?? "On request"}</td>
                     <td className="py-7 pr-4 text-lg font-semibold text-navy-900">{u.price}</td>
                     <td className="py-7 text-right">
                       <EnquireButton title={`${u.config} price breakup`} reason={`Price breakup — ${u.config}`} project={PROJECT_NAME} source={source} className={outlineBtn}>
@@ -301,13 +304,13 @@ export default function SarjapuraG47Page() {
             eyebrow="Explore in 3D"
             title={
               <>
-                Step inside a <em className="text-gold-600">2 BHK home</em>
+                Step inside a <em className="text-gold-600">2 BHK or 3 BHK home</em>
               </>
             }
-            intro="Rotate the home, zoom in, and tap any room to fly inside and see its size."
+            intro="Switch between 2 BHK and 3 BHK, rotate the home, zoom in, and tap any room to fly inside."
           />
           <Reveal className="mt-12">
-            <FlatExplorer project={PROJECT_NAME} source={source} />
+            <FlatExplorer project={PROJECT_NAME} source={source} units={project.units} whatsappMessage={project.whatsappMessage} />
           </Reveal>
         </div>
       </section>
@@ -418,7 +421,7 @@ export default function SarjapuraG47Page() {
       {/* Disclaimer */}
       <section className="bg-cream pt-10 pb-28 lg:pb-10">
         <p className="container-x text-xs leading-relaxed text-muted">
-          Project RERA: Coming soon. Marketed by {site.name} in collaboration with {project.partner}. Prices, offers and specifications are indicative and
+          Project RERA: Coming soon. Marketed by {site.name} in collaboration with {project.developer.name}. Prices, offers and specifications are indicative and
           subject to change without notice. Images are artistic impressions. This page is for information only and does not constitute an offer or
           contract. *Terms &amp; conditions apply.
         </p>

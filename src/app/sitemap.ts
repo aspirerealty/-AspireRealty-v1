@@ -6,7 +6,7 @@ import { blogs } from "@/data/blogs";
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const pages = ["/", "/about/", "/projects/", "/blogs/", "/referral/", "/contact/", "/privacy-policy/", "/terms/", "/disclaimer/"];
+  const pages = ["/", "/about/", "/projects/", "/apartments/", "/villas/", "/blogs/", "/contact/", "/privacy-policy/", "/terms/", "/disclaimer/"];
   return [
     ...pages.map((p) => ({ url: `${site.url}${p}` })),
     ...projects.map((p) => ({ url: `${site.url}${p.page}` })),
