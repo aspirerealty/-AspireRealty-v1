@@ -414,3 +414,9 @@ html.lenis body {
   from { transform: scale(1.04); }
   to { transform: scale(1.14); }
 }
+
+/* Project carousel: active dot fills until the next autoplay slide */
+@keyframes carousel-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
