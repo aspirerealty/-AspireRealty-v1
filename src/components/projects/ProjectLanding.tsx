@@ -9,6 +9,7 @@ import MobileCtaBar from "@/components/landing/MobileCtaBar";
 import Gallery from "./Gallery";
 import CollabBadge from "./CollabBadge";
 import VideoReel from "./VideoReel";
+import PlansGallery from "./PlansGallery";
 import { type Project, categoryLabels } from "@/data/projects";
 import { site, whatsappLink } from "@/data/site";
 
@@ -27,7 +28,9 @@ export default function ProjectLanding({ project }: { project: Project }) {
   const sections = [
     { id: "overview", label: "Overview" },
     { id: "pricing", label: "Pricing" },
+    ...(project.plans?.length ? [{ id: "plans", label: "Plans" }] : []),
     { id: "gallery", label: "Gallery" },
+    ...(project.youtube?.length ? [{ id: "walkthrough", label: "Walkthrough" }] : []),
     ...(project.video ? [{ id: "video", label: "Video" }] : []),
     { id: "amenities", label: "Amenities" },
     { id: "location", label: "Location" },
@@ -116,7 +119,8 @@ export default function ProjectLanding({ project }: { project: Project }) {
       <section id="pricing" className="scroll-mt-32 bg-white py-24 sm:py-32">
         <div className="container-x">
           <SectionHeading eyebrow="Pricing" title={villa ? "Villa configurations" : "Configurations & pricing"} />
-          <Stagger className={`mt-14 grid gap-6 ${project.units.length > 1 ? "md:grid-cols-2" : "max-w-xl"}`}>
+          <div className={`mt-14 grid gap-6 ${project.units.length === 1 ? "lg:grid-cols-2" : ""}`}>
+          <Stagger className={`grid gap-6 ${project.units.length === 3 ? "md:grid-cols-2 xl:grid-cols-3" : project.units.length > 1 ? "md:grid-cols-2" : ""}`}>
             {project.units.map((u) => (
               <StaggerItem key={u.config} className="flex flex-col border border-navy-900/10 bg-cream p-7 sm:p-9">
                 <p className="font-display text-3xl text-navy-900">{u.config}</p>
@@ -145,9 +149,27 @@ export default function ProjectLanding({ project }: { project: Project }) {
               </StaggerItem>
             ))}
           </Stagger>
+          {project.units.length === 1 && (
+            <ImageReveal className="relative min-h-80 overflow-hidden">
+              <Image src={project.gallery[1]?.src ?? project.cover} alt={project.gallery[1]?.alt ?? ""} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+            </ImageReveal>
+          )}
+          </div>
           {project.priceNote && <p className="mt-6 max-w-3xl text-sm text-muted">{project.priceNote}</p>}
         </div>
       </section>
+
+      {/* ── Plans ── */}
+      {project.plans?.length ? (
+        <section id="plans" className="scroll-mt-32 py-24 sm:py-32">
+          <div className="container-x">
+            <SectionHeading eyebrow="Plans" title={villa ? "Master plan & villa plans" : "Master plan & unit plans"} />
+            <Reveal className="mt-14">
+              <PlansGallery plans={project.plans} project={project.name} source={source} whatsappMessage={project.whatsappMessage} />
+            </Reveal>
+          </div>
+        </section>
+      ) : null}
 
       {/* ── Gallery ── */}
       <section id="gallery" className="scroll-mt-32 py-24 sm:py-32">
@@ -159,6 +181,32 @@ export default function ProjectLanding({ project }: { project: Project }) {
           <p className="mt-6 text-xs text-muted">Images are artistic impressions for representation only, except where shot at site.</p>
         </div>
       </section>
+
+      {/* ── Walkthrough videos (YouTube) ── */}
+      {project.youtube?.length ? (
+        <section id="walkthrough" className="scroll-mt-32 bg-white py-24 sm:py-32">
+          <div className="container-x">
+            <SectionHeading eyebrow="Walkthrough" title={`Take a tour of ${project.name}`} />
+            <Stagger className={`mt-14 grid gap-8 ${project.youtube.length > 1 ? "lg:grid-cols-2" : "max-w-4xl"}`}>
+              {project.youtube.map((v) => (
+                <StaggerItem key={v.id}>
+                  <div className="relative aspect-video overflow-hidden bg-navy-950 shadow-[0_30px_60px_-30px_rgba(9,44,76,0.5)]">
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${v.id}?rel=0`}
+                      title={v.title}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="absolute inset-0 size-full"
+                    />
+                  </div>
+                  <p className="mt-3 font-display text-xl text-navy-900">{v.title}</p>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
+        </section>
+      ) : null}
 
       {/* ── Video ── */}
       {project.video && (
@@ -221,6 +269,11 @@ export default function ProjectLanding({ project }: { project: Project }) {
                 </StaggerItem>
               ))}
             </Stagger>
+            {project.mapLink && (
+              <a href={project.mapLink} target="_blank" rel="noreferrer" className={`${outlineBtn} mt-8`}>
+                <MapPin className="size-4" /> Get directions
+              </a>
+            )}
           </div>
           <Reveal className="relative min-h-[420px] overflow-hidden border border-navy-900/10 bg-white">
             <iframe

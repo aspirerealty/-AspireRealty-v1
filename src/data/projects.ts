@@ -1,6 +1,6 @@
 // Projects Aspire Ventures Realty markets in collaboration with developers.
 // Engrace Vista and Soulace details come from Modern Spaaces' brochures and
-// October 2026 cost sheets; Sarjapura G+47 from the launch posters + EOI brief.
+// October 2026 cost sheets; Sky & High (code name, G+47) from the launch posters + EOI brief.
 
 export type ProjectStatus = "ongoing" | "upcoming" | "completed";
 export type ProjectCategory = "apartment" | "villa";
@@ -19,6 +19,9 @@ export const DEVELOPERS = {
 // One configuration row. Builders quote super built-up area (SBUA) and
 // carpet area; villas also have a plot area.
 export type Unit = { config: string; sbua: string; carpet?: string; plot?: string; price: string };
+
+// A master plan or unit plan image from the developer's brochure.
+export type Plan = { src: string; title: string; caption?: string };
 
 export type Project = {
   slug: string;
@@ -42,11 +45,14 @@ export type Project = {
   offer?: { title: string; points: string[]; note: string };
   units: Unit[];
   priceNote?: string;
+  plans?: Plan[];
   amenities: string[];
   connectivity: { place: string; time?: string }[];
   mapQuery: string;
+  mapLink?: string; // Google Maps link for "Get directions"
+  youtube?: { id: string; title: string }[];
   video?: { src: string; poster: string; title: string };
-  page: string; // dedicated page for this project, e.g. "/sarjapura-g47/"
+  page: string; // dedicated page for this project, e.g. "/sky-and-high/"
   whatsappMessage?: string;
 };
 
@@ -63,11 +69,13 @@ export const categoryLabels: Record<ProjectCategory, string> = {
 
 const VISTA = "/assets/projects/engrace-vista";
 const SOULACE = "/assets/projects/soulace";
+const SKY = "/assets/projects/sky-and-high";
+const NEON = "/assets/projects/neon";
 
 export const projects: Project[] = [
   {
-    slug: "sarjapura-g47",
-    name: "Sarjapura G+47",
+    slug: "sky-and-high",
+    name: "Sky & High",
     category: "apartment",
     developer: DEVELOPERS.modernSpaaces,
     status: "upcoming",
@@ -78,14 +86,19 @@ export const projects: Project[] = [
     startingPrice: "₹1.10 Cr onwards",
     summary:
       "The next big address in Sarjapura — two G+47 signature towers on Sarjapura Main Road, right opposite DMart, with 80% open space and 50+ amenities.",
-    cover: "/assets/images/sarjapura-tower.jpg",
-    heroImage: "/assets/images/skyline.jpg", // TODO: high-res render from the developer
+    cover: `${SKY}/twin-towers-golden-hour.jpg`,
+    heroImage: `${SKY}/sunset-twin-towers-gardens.jpg`,
     gallery: [
-      { src: "/assets/images/sarjapura-tower.jpg", alt: "Tower crown lit at dusk" },
-      { src: "/assets/images/sarjapura-facade.jpg", alt: "Landscaped balconies with warm façade lighting" },
-      { src: "/assets/images/sarjapura-tower-dusk.jpg", alt: "Tower rising above the Sarjapura skyline at sunset" },
-      { src: "/assets/images/sarjapura-poster-2.jpg", alt: "New launch poster — No Pre-EMI offer" },
-      { src: "/assets/images/sarjapura-poster-1.jpg", alt: "New launch poster — EOI offer" },
+      { src: `${SKY}/twin-towers-golden-hour.jpg`, alt: "Sky & High twin towers at golden hour" },
+      { src: `${SKY}/poolside-sunset.jpg`, alt: "Poolside deck at sunset" },
+      { src: `${SKY}/sunset-luminous-balconies.jpg`, alt: "Twin towers with luminous balconies at sunset" },
+      { src: `${SKY}/twilight-illuminated-gardens.jpg`, alt: "Illuminated entrance gardens at twilight" },
+      { src: `${SKY}/balconies-golden-hour.jpg`, alt: "Landscaped balconies at golden hour" },
+      { src: `${SKY}/sunset-twin-towers-gardens.jpg`, alt: "Aerial view of the towers and podium gardens" },
+      { src: `${SKY}/twin-towers-blue-sky.jpg`, alt: "Twin towers under a deep blue sky" },
+      { src: `${SKY}/twin-towers-landscapes.jpg`, alt: "Twin towers amidst lush landscapes" },
+      { src: "/assets/images/sarjapura-poster-2.jpg", alt: "Launch poster — No Pre-EMI offer" },
+      { src: "/assets/images/sarjapura-poster-1.jpg", alt: "Launch poster — EOI offer" },
     ],
     keyFacts: [
       { label: "Floors", value: "G + 47" },
@@ -116,7 +129,7 @@ export const projects: Project[] = [
     ],
     amenities: [
       "Swimming Pool",
-      "Gymnasium",
+      "GYM",
       "Landscaped Podium",
       "Children's Play Area",
       "Jogging Track",
@@ -134,9 +147,9 @@ export const projects: Project[] = [
       { place: "Electronic City", time: "30 min" },
     ],
     mapQuery: "DMart Sarjapura Main Road, Bengaluru",
-    page: "/sarjapura-g47/",
+    page: "/sky-and-high/",
     whatsappMessage:
-      "Hi, I'm interested in the G+47 residential project on Sarjapura Main Road. Please share the floor plans, pricing and EOI details.",
+      "Hi, I'm interested in Sky & High, the G+47 project on Sarjapura Main Road. Please share the floor plans, pricing and EOI details.",
   },
   {
     slug: "engrace-vista",
@@ -158,11 +171,9 @@ export const projects: Project[] = [
     gallery: [
       { src: `${VISTA}/towers.jpg`, alt: "Engrace Vista towers at sunset" },
       { src: `${VISTA}/pool.jpg`, alt: "Swimming pool and landscaped deck at dusk" },
-      { src: `${VISTA}/skyline.jpg`, alt: "Engrace Vista towers above landscaped gardens" },
       { src: `${VISTA}/landscape-aerial.jpg`, alt: "Aerial view of the landscaped podium and pool" },
       { src: `${VISTA}/walkway.jpg`, alt: "Tree-lined walkway between the towers" },
       { src: `${VISTA}/sports-court.jpg`, alt: "Multi-purpose sports court" },
-      { src: `${VISTA}/clubhouse.jpg`, alt: "Clubhouse" },
       { src: `${VISTA}/corner-unit.jpg`, alt: "Corner unit living room with wide views" },
       { src: `${VISTA}/balcony-view.jpg`, alt: "Wide balcony with city views" },
       { src: `${VISTA}/ad-3-balconies.jpg`, alt: "3 balconies — extra space to breathe and unwind" },
@@ -188,6 +199,13 @@ export const projects: Project[] = [
       "Part of a 1400+ apartment and 266-villa development cluster",
     ],
     units: [{ config: "3 BHK", sbua: "2,116 – 2,200 sq. ft.", carpet: "1,279 – 1,330 sq. ft.", price: "₹1.80 – 1.87 Cr" }],
+    plans: [
+      { src: `${VISTA}/plan-master.jpg`, title: "Master plan", caption: "8 acres · 7 towers · podium amenities" },
+      { src: `${VISTA}/plan-t1-t3-units-01-02.jpg`, title: "T1 – T3 · Units 01 & 02", caption: "East & west facing · SBUA 2178 & 2127 sq. ft." },
+      { src: `${VISTA}/plan-t1-t3-units-03-04.jpg`, title: "T1 – T3 · Units 03 & 04", caption: "East & west facing · SBUA 2129 & 2116 sq. ft." },
+      { src: `${VISTA}/plan-t4-t7-units-01-02.jpg`, title: "T4 – T7 · Units 01 & 02", caption: "East & west facing · SBUA 2190 & 2151 sq. ft." },
+      { src: `${VISTA}/plan-t4-t7-units-03-04.jpg`, title: "T4 – T7 · Units 03 & 04", caption: "East & west facing · SBUA 2192 & 2200 sq. ft." },
+    ],
     priceNote:
       "Basic cost from ₹8,500 / sq. ft. (October 2026 cost sheet). GST, clubhouse, corpus, maintenance and other additional charges extra. Prices subject to change.",
     amenities: [
@@ -195,7 +213,7 @@ export const projects: Project[] = [
       "Swimming Pool",
       "Kids Splash Pool",
       "Jacuzzi",
-      "Gymnasium",
+      "GYM",
       "Squash Court",
       "Badminton Court",
       "Banquet Hall",
@@ -221,7 +239,7 @@ export const projects: Project[] = [
     ],
     mapQuery: "Engrace Vista, Kada Agrahara Road, Sarjapura, Bengaluru",
     page: "/engrace-vista/",
-    whatsappMessage: "Hi, I'm interested in Engrace Vista by Modern Spaaces. Please share the cost sheet, floor plans and site visit details.",
+    whatsappMessage: "Hi, I'm interested in Engrace Vista by Modern Spaaces. Can I get more details on this?",
   },
   {
     slug: "soulace",
@@ -272,11 +290,16 @@ export const projects: Project[] = [
       { config: "4 BHK · The Cosy Villa", plot: "1,809 sq. ft.", sbua: "3,387 sq. ft.", price: "₹5.00 Cr" },
       { config: "5 BHK + Service · The Grand Villa", plot: "2,325 sq. ft.", sbua: "4,235 sq. ft.", price: "₹6.50 Cr" },
     ],
+    plans: [
+      { src: `${SOULACE}/plan-master.jpg`, title: "Master plan", caption: "26.5 acres · 266 villas" },
+      { src: `${SOULACE}/plan-4bhk-cosy-villa.jpg`, title: "4 BHK · The Cosy Villa", caption: "Plot 1809 sq. ft. · BUA 3387 sq. ft. · 3 floors" },
+      { src: `${SOULACE}/plan-5bhk-grand-villa.jpg`, title: "5 BHK · The Grand Villa", caption: "Plot 2325 sq. ft. · BUA 4235 sq. ft. · with service quarter" },
+    ],
     priceNote:
       "Typical units, all-inclusive except GST & registration (October 2026 cost sheet). Larger plots at ₹7,500 / sq. ft.; PLC applicable for east-facing, premium and corner villas. Prices subject to change.",
     amenities: [
       "Temperature-controlled Pool",
-      "Gym",
+      "GYM",
       "Squash Court",
       "Badminton Court",
       "Mini Golf",
@@ -303,11 +326,108 @@ export const projects: Project[] = [
       { place: "Police station", time: "3 km" },
     ],
     mapQuery: "Soulace by Modern Spaaces, Kada Agrahara, Sarjapur, Bengaluru",
+    youtube: [
+      { id: "WkVE3q3eTf4", title: "Soulace by Modern Spaaces — 4 BHK Villa Walkthrough" },
+    ],
     video: { src: `${SOULACE}/handover-reel.mp4`, poster: `${SOULACE}/handover-reel.jpg`, title: "Handover has begun" },
     page: "/soulace/",
     whatsappMessage: "Hi, I'm interested in Soulace villas by Modern Spaaces. Please share villa availability, pricing and site visit details.",
   },
 ];
+
+// Neon sits with the other apartments, before the villas.
+projects.splice(projects.findIndex((p) => p.category === "villa"), 0, {
+  slug: "neon",
+  name: "Neon",
+  category: "apartment",
+  developer: DEVELOPERS.modernSpaaces,
+  logo: { dark: "/assets/logos/neon-dark.png", white: "/assets/logos/neon-white.png" },
+  rera: "PRM/KA/RERA/1251/308/PR/050725/007897",
+  status: "ongoing",
+  badge: "Possession Dec 2029",
+  type: "2 & 3 BHK Apartments · 1230 – 1740 sq. ft.",
+  location: "Mahal Chowdenahalli Village, Sarjapura Hobli, along NH 648, Bengaluru 562125",
+  locality: "NH 648, near Sarjapur Road",
+  startingPrice: "₹83 Lakh onwards",
+  summary:
+    "A radiant way to live — 292 open-layout 2 & 3 BHK homes on 4.19 acres along NH 648 near Sarjapur Road, with 70% open space, a 15,000 sq. ft. clubhouse and quick access to STRR and the upcoming SWIFT City.",
+  cover: `${NEON}/front.jpg`,
+  heroImage: `${NEON}/front.jpg`,
+  gallery: [
+    { src: `${NEON}/aerial.jpg`, alt: "Aerial view of Neon amid greenery" },
+    { src: `${NEON}/clubhouse.jpg`, alt: "Clubhouse and Neo Mart" },
+    { src: `${NEON}/front.jpg`, alt: "Neon tower and entrance plaza" },
+    { src: `${NEON}/pool.jpg`, alt: "Swimming pool" },
+    { src: `${NEON}/basketball-court.jpg`, alt: "Basketball court at sunset" },
+    { src: `${NEON}/kids-play.jpg`, alt: "Kids' play lawn" },
+    { src: `${NEON}/jogging-track.jpg`, alt: "Jogging track" },
+  ],
+  keyFacts: [
+    { label: "Land", value: "4.19 Acres" },
+    { label: "Units", value: "292 Homes" },
+    { label: "Configuration", value: "2 & 3 BHK" },
+    { label: "Super Built-up", value: "1230 – 1740 sq. ft." },
+    { label: "Structure", value: "2B + G + 13/14" },
+    { label: "Possession", value: "Dec 2029 onwards" },
+  ],
+  highlights: [
+    "Open layouts with seamless interiors for easy living",
+    "70% open space — more greenery, more room to breathe",
+    "Cross-ventilated rooms with abundant sunlight",
+    "Well-lit corridors with skylights",
+    "15,000 sq. ft. clubhouse for fitness, work and leisure",
+    "Aluminium formwork construction",
+    "Direct access to NH 648 and STRR, near the upcoming SWIFT City",
+    "BMRDA sanctioned & RERA approved",
+  ],
+  units: [
+    { config: "2 BHK", sbua: "1,230 sq. ft.", carpet: "775 sq. ft.", price: "₹83 Lakh" },
+    { config: "3 BHK · Type 02 & 03", sbua: "1,553 – 1,583 sq. ft.", carpet: "992 – 1,014 sq. ft.", price: "₹1.05 – 1.07 Cr" },
+    { config: "3 BHK · Type 01", sbua: "1,740 sq. ft.", carpet: "1,113 sq. ft.", price: "₹1.17 Cr" },
+  ],
+  priceNote:
+    "Basic cost at ₹6,750 / sq. ft. (October 2026 cost sheet). Car parking (₹4 Lakh), GST, clubhouse, corpus, maintenance and other charges extra. FRC (Floor Rise Charges) of ₹25 / sq. ft. per floor from the 4th floor; PLC applies to select units. Prices subject to change.",
+  plans: [
+    { src: `${NEON}/plan-master.jpg`, title: "Master plan", caption: "4.19 acres · 3 blocks · podium amenities" },
+    { src: `${NEON}/plan-tower.jpg`, title: "Tower plan", caption: "Typical floor · Blocks A, B & C" },
+    { src: `${NEON}/plan-2bhk.jpg`, title: "2 BHK", caption: "West facing · SBUA 1,230 · carpet 775 sq. ft." },
+    { src: `${NEON}/plan-3bhk-type-02.jpg`, title: "3 BHK · Type 02", caption: "West facing · SBUA 1,553 · carpet 992 sq. ft." },
+    { src: `${NEON}/plan-3bhk-type-03.jpg`, title: "3 BHK · Type 03", caption: "West facing · SBUA 1,583 · carpet 1,014 sq. ft." },
+    { src: `${NEON}/plan-3bhk-type-01.jpg`, title: "3 BHK · Type 01", caption: "East facing · SBUA 1,740 · carpet 1,113 sq. ft." },
+  ],
+  amenities: [
+    "15,000 sq. ft. Clubhouse",
+    "GYM",
+    "Swimming Pool",
+    "Kids' Pool",
+    "WFH Space",
+    "Library",
+    "Multi-purpose Hall",
+    "Badminton",
+    "Table Tennis",
+    "Pickleball Court",
+    "Basketball Court",
+    "Cricket Pitch",
+    "Jogging Track",
+    "Kids' & Toddlers' Play",
+    "Open Air Theatre",
+    "Bonfire Plaza",
+    "Party Lawn",
+    "EV Charging",
+  ],
+  connectivity: [
+    { place: "NH 648", time: "Direct access" },
+    { place: "STRR (Satellite Town Ring Road)" },
+    { place: "Sarjapur Road", time: "Nearby" },
+    { place: "Upcoming SWIFT City" },
+    { place: "Dommasandra Circle" },
+    { place: "Electronic City & Whitefield" },
+  ],
+  mapQuery: "12.87016,77.805367",
+  mapLink: "https://maps.app.goo.gl/LdYGDiTEffQaw6tS7",
+  page: "/neon/",
+  whatsappMessage: "Hi, I'm interested in Neon by Modern Spaaces on NH 648. Please share the cost sheet, floor plans and site visit details.",
+});
 
 export function getProject(slug: string) {
   return projects.find((p) => p.slug === slug);

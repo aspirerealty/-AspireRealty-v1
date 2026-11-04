@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
-import { BadgeIndianRupee, Car, Headset, Phone, X } from "lucide-react";
+import { BadgeIndianRupee, Headset, Phone, X } from "lucide-react";
 import EnquiryForm, { LEAD_SUBMITTED_KEY } from "./EnquiryForm";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
@@ -20,7 +20,6 @@ const SHOWN_KEY = "aspire-popup-shown";
 
 const PROMISES = [
   { icon: Headset, label: "Instant Call Back" },
-  { icon: Car, label: "Free Site Visit" },
   { icon: BadgeIndianRupee, label: "Unmatched Price" },
 ];
 
@@ -106,7 +105,7 @@ export default function LeadPopup() {
               {/* We promise */}
               <div className="bg-cream px-6 py-6 md:py-10">
                 <p className="text-center font-display text-2xl text-navy-900 md:text-3xl">We Promise</p>
-                <ul className="mt-5 grid grid-cols-3 gap-3 md:mt-8 md:grid-cols-1 md:gap-8">
+                <ul className="mt-5 grid grid-cols-2 gap-3 md:mt-8 md:grid-cols-1 md:gap-8">
                   {PROMISES.map(({ icon: Icon, label }) => (
                     <li key={label} className="flex flex-col items-center gap-2 text-center text-xs text-navy-900 md:text-sm">
                       <span className="grid size-12 place-items-center rounded-full border border-gold-500/50 text-gold-600 md:size-14">

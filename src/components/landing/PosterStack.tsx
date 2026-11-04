@@ -10,8 +10,8 @@ import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 // stay sharp.
 
 const POSTERS = [
-  { src: "/assets/images/sarjapura-poster-2.jpg", alt: "Sarjapura G+47 launch poster — No Pre-EMI offer" },
-  { src: "/assets/images/sarjapura-poster-1.jpg", alt: "Sarjapura G+47 launch poster — EOI offer" },
+  { src: "/assets/projects/sky-and-high/twin-towers-golden-hour.jpg", alt: "Sky & High twin towers at golden hour" },
+  { src: "/assets/images/sarjapura-poster-2.jpg", alt: "Sky & High launch poster — No Pre-EMI offer" },
 ];
 
 export default function PosterStack() {

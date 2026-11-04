@@ -3,6 +3,7 @@ import EnquiryForm from "@/components/forms/EnquiryForm";
 import { Reveal } from "@/components/motion/Reveal";
 import { site } from "@/data/site";
 import WireCubes from "./WireCubes";
+import SocialIcons from "@/components/ui/SocialIcons";
 
 // "Let's talk" block placed at the bottom of most pages.
 export default function ContactSection({ source, project }: { source: string; project?: string }) {
@@ -32,6 +33,10 @@ export default function ContactSection({ source, project }: { source: string; pr
               </span>
               {site.email}
             </a>
+          </div>
+          <div className="mt-10">
+            <p className="text-xs font-semibold tracking-[0.25em] text-white/50 uppercase">Follow us</p>
+            <SocialIcons className="mt-4" />
           </div>
         </Reveal>
         <Reveal delay={0.15} className="border border-white/10 bg-navy-950/40 p-6 backdrop-blur-sm sm:p-10">

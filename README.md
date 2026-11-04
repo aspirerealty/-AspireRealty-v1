@@ -16,7 +16,8 @@ npm run build      # static site in ./out
 |---|---|
 | Phone, WhatsApp, email, address, social links, RERA text | `src/data/site.ts` |
 | Projects (shown as "In collaboration with …") | `src/data/projects.ts` |
-| Sarjapura G+47 landing page (name, copy, sections) | `src/app/sarjapura-g47/page.tsx` |
+| Sky & High (G+47) landing page (name, copy, sections) | `src/app/sky-and-high/page.tsx` |
+| Other project pages (Engrace Vista, Neon, Soulace) | `src/data/projects.ts` → `ProjectLanding` |
 | Blog posts | `src/data/blogs.ts` |
 | Home page FAQs | `src/data/faqs.ts` |
 | Images | `public/assets/images/` |

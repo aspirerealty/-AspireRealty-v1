@@ -25,7 +25,7 @@ export default function LandingHero({ name, developer, source }: { name: string;
   return (
     <section ref={ref} className="relative min-h-svh overflow-hidden bg-navy-950">
       {/* Ambient backdrop: the poster itself, heavily blurred */}
-      <Image src="/assets/images/sarjapura-poster-2.jpg" alt="" fill sizes="10vw" className="scale-125 object-cover opacity-60 blur-3xl" />
+      <Image src="/assets/projects/sky-and-high/sunset-twin-towers-gardens.jpg" alt="" fill sizes="10vw" className="scale-125 object-cover opacity-60 blur-3xl" />
       <div className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/85 to-navy-950/40" />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-navy-950 to-transparent" />
 

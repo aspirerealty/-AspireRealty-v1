@@ -131,19 +131,7 @@ export default function EnquiryForm({
               </label>
             )}
 
-            {quick && (
-              <label className={`flex items-start gap-2 text-xs ${dark ? "text-white/50" : "text-muted"}`}>
-                <input type="checkbox" required defaultChecked className="mt-0.5 accent-gold-600" />
-                I consent to be contacted by {site.shortName} via call, SMS, email or WhatsApp, in line with the privacy policy.
-              </label>
-            )}
-
-            <div className={`flex flex-col gap-4 ${quick ? "" : "sm:col-span-2 sm:flex-row sm:items-center sm:justify-between"}`}>
-              {!quick && (
-                <p className={`text-xs ${dark ? "text-white/40" : "text-muted"}`}>
-                  By submitting, you agree to be contacted by {site.shortName} via call, SMS, email or WhatsApp.
-                </p>
-              )}
+            <div className={`flex flex-col gap-4 ${quick ? "" : "sm:col-span-2 sm:items-center"}`}>
               <button
                 type="submit"
                 disabled={status === "sending"}

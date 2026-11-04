@@ -9,7 +9,7 @@ const COPY: Record<ProjectCategory, { title: string; intro: string; image: strin
   apartment: {
     title: "Apartments in collaboration with Bengaluru's finest developers",
     intro: "High-rise homes off Sarjapur Road — from landmark G+47 towers to Sarjapur's exclusive all-3 BHK community.",
-    image: "/assets/projects/engrace-vista/skyline.jpg",
+    image: "/assets/projects/engrace-vista/towers.jpg",
   },
   villa: {
     title: "Independent villas, built for the way you live",

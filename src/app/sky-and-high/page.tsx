@@ -31,9 +31,9 @@ import { getProject } from "@/data/projects";
 import { site, whatsappLink } from "@/data/site";
 
 // TODO: replace with the final project name when it's announced.
-const PROJECT_NAME = "Sarjapura G+47";
+const PROJECT_NAME = "Sky & High";
 
-const project = getProject("sarjapura-g47")!;
+const project = getProject("sky-and-high")!;
 
 export const metadata: Metadata = {
   title: `${PROJECT_NAME} — 2 & 3 BHK on Sarjapura Main Road | EOI Open`,
@@ -92,7 +92,7 @@ const outlineBtn =
 const goldBtn =
   "group inline-flex items-center justify-center gap-2 bg-gold-500 px-7 py-3.5 text-sm font-semibold text-navy-950 transition-all duration-500 hover:bg-gold-400";
 
-export default function SarjapuraG47Page() {
+export default function SkyAndHighPage() {
   return (
     <>
       <LandingHero name={PROJECT_NAME} developer={project.developer} source={source} />
@@ -338,7 +338,7 @@ export default function SarjapuraG47Page() {
             </Stagger>
           </div>
           <ImageReveal className="relative min-h-96 overflow-hidden">
-            <Image src="/assets/images/amenity-pool.jpg" alt="Illustrative pool deck at dusk" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+            <Image src="/assets/projects/soulace/clubhouse-pool.jpg" alt="Clubhouse pool deck" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
             <span className="absolute bottom-4 left-4 bg-navy-950/70 px-3 py-1 text-xs text-white/80 backdrop-blur">Representative image</span>
           </ImageReveal>
         </div>

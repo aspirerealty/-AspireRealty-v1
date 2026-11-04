@@ -47,6 +47,9 @@ export default function AboutPage() {
               }
             />
             <Reveal delay={0.1} className="mt-6 space-y-5 prose-body">
+              <p className="font-display text-2xl text-navy-900">
+                <span className="text-gold-600">10+ years</span> of experience in Bengaluru real estate.
+              </p>
               <p>
                 {site.name} brings together Bengaluru&apos;s trusted developers and the families looking for their next home. Rather than doing it all
                 alone, we collaborate — combining a developer&apos;s construction expertise with our focus on planning, marketing and customer care.
@@ -65,23 +68,6 @@ export default function AboutPage() {
               <Image src="/assets/images/site-workers.jpg" alt="Engineers on a construction site" fill sizes="(min-width: 1024px) 22vw, 45vw" className="object-cover" />
             </ImageReveal>
           </div>
-        </div>
-      </section>
-
-      <section className="bg-navy-950 py-24 text-white sm:py-32">
-        <div className="container-x grid gap-12 lg:grid-cols-2">
-          <Reveal>
-            <span className="eyebrow text-gold-400">Our mission</span>
-            <p className="mt-6 font-display text-3xl leading-snug sm:text-4xl">
-              To make buying a home simple, transparent and joyful — by partnering only with developers we would trust with our own families.
-            </p>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <span className="eyebrow text-gold-400">Our vision</span>
-            <p className="mt-6 font-display text-3xl leading-snug sm:text-4xl">
-              To be Bengaluru&apos;s most trusted name in collaborative real estate — known for the homes we bring and the promises we keep.
-            </p>
-          </Reveal>
         </div>
       </section>
 

@@ -2,15 +2,15 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { LockKeyhole, Maximize2, MessageCircle, MousePointerClick } from "lucide-react";
+import { Maximize2, MousePointerClick } from "lucide-react";
 import BrandLoader from "@/components/brand/BrandLoader";
 import EnquireButton from "@/components/forms/EnquireButton";
-import EnquiryForm, { LEAD_SUBMITTED_KEY } from "@/components/forms/EnquiryForm";
+import UnlockCard from "@/components/forms/UnlockCard";
 import { LAYOUTS } from "@/data/flat-layouts";
 import type { Unit } from "@/data/projects";
-import { whatsappLink } from "@/data/site";
+import { useUnlocked } from "@/lib/unlock";
 import { useNearViewport } from "./useNearViewport";
 
 const FlatScene = dynamic(() => import("./FlatScene"), {
@@ -21,32 +21,6 @@ const FlatScene = dynamic(() => import("./FlatScene"), {
     </div>
   ),
 });
-
-// The 3D tour unlocks once a visitor has shared their details (any form on
-// the site) or tapped through to WhatsApp, and stays unlocked on that device.
-const UNLOCK_KEY = "aspire-3d-unlocked";
-const UNLOCK_EVENT = "aspire-3d-unlock";
-const isUnlocked = () => {
-  try {
-    return localStorage.getItem(UNLOCK_KEY) === "1" || localStorage.getItem(LEAD_SUBMITTED_KEY) === "1";
-  } catch {
-    return false;
-  }
-};
-const subscribe = (cb: () => void) => {
-  window.addEventListener(UNLOCK_EVENT, cb);
-  window.addEventListener("storage", cb);
-  return () => {
-    window.removeEventListener(UNLOCK_EVENT, cb);
-    window.removeEventListener("storage", cb);
-  };
-};
-const unlock = () => {
-  try {
-    localStorage.setItem(UNLOCK_KEY, "1");
-  } catch {}
-  window.dispatchEvent(new Event(UNLOCK_EVENT));
-};
 
 // Interactive 3D 2 BHK / 3 BHK homes. Click a room (in 3D or the list) to fly into it.
 export default function FlatExplorer({
@@ -62,7 +36,7 @@ export default function FlatExplorer({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { mounted, active } = useNearViewport(ref);
-  const unlocked = useSyncExternalStore(subscribe, isUnlocked, () => false);
+  const unlocked = useUnlocked();
   const [layoutId, setLayoutId] = useState(LAYOUTS[0].id);
   const [selected, setSelected] = useState<string | null>(null);
   const layout = LAYOUTS.find((l) => l.id === layoutId) ?? LAYOUTS[0];
@@ -71,7 +45,7 @@ export default function FlatExplorer({
 
   return (
     <div className="grid overflow-hidden border border-navy-900/10 bg-white lg:grid-cols-[1fr_340px]">
-      <div ref={ref} className="relative h-[460px] bg-[#e4e9f0] sm:h-[560px]">
+      <div ref={ref} className="relative h-[600px] overflow-hidden bg-[#e4e9f0] sm:h-[620px]">
         {unlocked ? (
           <>
             {mounted && <FlatScene key={layout.id} layout={layout} active={active} selected={selected} onSelect={setSelected} />}
@@ -109,25 +83,15 @@ export default function FlatExplorer({
             <Image src="/assets/images/flat-3d-preview.jpg" alt="" fill sizes="(min-width: 1024px) 70vw, 100vw" className="scale-110 object-cover blur-md" />
             <div className="absolute inset-0 bg-navy-950/45" />
             <div className="relative grid h-full place-items-center overflow-y-auto p-4" data-lenis-prevent>
-              <div className="w-full max-w-md bg-white/95 p-6 shadow-2xl backdrop-blur sm:p-8">
-                <span className="grid size-12 place-items-center rounded-full bg-gold-500 text-navy-950">
-                  <LockKeyhole className="size-5" />
-                </span>
-                <h3 className="mt-4 font-display text-3xl text-navy-900">Unlock the 3D home tour</h3>
-                <p className="mt-2 text-sm text-muted">Share your details or message us on WhatsApp to walk through the 2 BHK and 3 BHK homes in 3D.</p>
-                <div className="mt-5">
-                  <EnquiryForm variant="quick" source={`${source} — 3D tour`} project={project} defaultReason="3D home tour" submitLabel="Unlock 3D tour" onSuccess={unlock} />
-                </div>
-                <a
-                  href={whatsappLink(whatsappMessage)}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={unlock}
-                  className="mt-4 inline-flex w-full items-center justify-center gap-2 bg-[#25D366] px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                >
-                  <MessageCircle className="size-4" /> Unlock via WhatsApp
-                </a>
-              </div>
+              <UnlockCard
+                title="Unlock the 3D home tour"
+                text="Share your details or message us on WhatsApp to walk through the 2 BHK and 3 BHK homes in 3D."
+                submitLabel="Unlock 3D tour"
+                project={project}
+                source={`${source} — 3D tour`}
+                reason="3D home tour"
+                whatsappMessage={whatsappMessage}
+              />
             </div>
           </div>
         )}

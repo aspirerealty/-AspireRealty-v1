@@ -6,7 +6,7 @@ import { ImageReveal, Reveal, Stagger, StaggerItem } from "@/components/motion/R
 import Counter from "@/components/motion/Counter";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
-import ProjectCard from "@/components/projects/ProjectCard";
+import ProjectCarousel from "@/components/projects/ProjectCarousel";
 import BlogCard from "@/components/blog/BlogCard";
 import Faq from "@/components/sections/Faq";
 import FeatureCards from "@/components/sections/FeatureCards";
@@ -26,7 +26,7 @@ const pillars = [
 ];
 
 export default function Home() {
-  const featured = getProject("sarjapura-g47");
+  const featured = getProject("sky-and-high");
 
   return (
     <>
@@ -36,14 +36,16 @@ export default function Home() {
       <section id="about" className="py-24 sm:py-32">
         <div className="container-x grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
           <div className="relative">
-            <ImageReveal className="relative aspect-[595/402] overflow-hidden">
-              <Image src="/assets/images/g47-closer-to-the-moon.jpg" alt="A little closer to the moon — the view from the upper floors" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+            <ImageReveal className="relative aspect-[4/5] overflow-hidden sm:aspect-[5/4] lg:aspect-[4/5]">
+              <Image src="/assets/projects/sky-and-high/twin-towers-golden-hour.jpg" alt="Sky & High twin towers at golden hour" fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover object-[50%_35%]" />
             </ImageReveal>
             <Reveal delay={0.3} className="absolute -bottom-10 -left-4 hidden w-56 bg-navy-900 p-6 text-white shadow-2xl sm:block lg:-left-10">
               <p className="font-display text-5xl text-gold-400">
                 <Counter value={47} prefix="G+" />
               </p>
-              <p className="mt-2 text-sm text-white/70">Our landmark collaboration on Sarjapura Main Road</p>
+              <p className="mt-2 text-sm text-white/70">
+                <span className="font-semibold text-white">Sky &amp; High</span> — our landmark collaboration on Sarjapura Main Road
+              </p>
             </Reveal>
           </div>
           <div>
@@ -121,13 +123,9 @@ export default function Home() {
               </ButtonLink>
             </Reveal>
           </div>
-          <Stagger className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {projects.slice(0, 3).map((p) => (
-              <StaggerItem key={p.slug}>
-                <ProjectCard project={p} />
-              </StaggerItem>
-            ))}
-          </Stagger>
+          <Reveal className="mt-14">
+            <ProjectCarousel projects={projects} />
+          </Reveal>
         </div>
       </section>
 
