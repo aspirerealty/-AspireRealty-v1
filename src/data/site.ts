@@ -7,7 +7,7 @@ export const site = {
   tagline: "Where Aspirations turn into Reality",
   description:
     "Aspire Ventures Realty partners with trusted developers to bring thoughtfully designed homes across Bengaluru — from launch to handover, with you at every step.",
-  url: "https://www.aspireventuresrealty.com", // TODO: final domain
+  url: "https://aspireventuresrealty.in",
   phone: "+91 97439 15259", // TODO: confirm the calling number (currently the WhatsApp ad number)
   phoneHref: "tel:+919743915259",
   whatsapp: "919743915259", // international format, digits only

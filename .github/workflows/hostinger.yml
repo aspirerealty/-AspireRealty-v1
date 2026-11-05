@@ -1,0 +1,58 @@
+# Builds the site for Hostinger on every push to main and publishes the
+# ready-to-serve files to the `hostinger` branch. Hostinger (hPanel → Advanced
+# → Git) deploys that branch into public_html. If the HOSTINGER_WEBHOOK secret
+# is set (hPanel's auto-deployment URL), Hostinger is told to deploy right away.
+name: Build for Hostinger
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hostinger
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HOSTINGER_WEBHOOK: ${{ secrets.HOSTINGER_WEBHOOK }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build static site
+        run: npm run build
+        env:
+          NEXT_PUBLIC_LEAD_ENDPOINT: /api/lead.php
+
+      - name: Add Hostinger server files
+        run: |
+          cp -r hostinger/public/. out/
+          rm -f out/_redirects out/__forms.html
+
+      - name: Publish to the hostinger branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: hostinger
+          publish_dir: ./out
+          force_orphan: true
+          enable_jekyll: true
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
+          full_commit_message: "Site build from ${{ github.sha }}"
+
+      - name: Tell Hostinger to deploy
+        if: env.HOSTINGER_WEBHOOK != ''
+        run: curl -fsS -X POST "$HOSTINGER_WEBHOOK"
