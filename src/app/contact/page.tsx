@@ -70,15 +70,6 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="relative h-[420px] border-t border-navy-900/10">
-        <iframe
-          title="Office location"
-          src={`https://maps.google.com/maps?q=${encodeURIComponent(site.address.mapQuery)}&z=14&output=embed`}
-          className="absolute inset-0 size-full grayscale-[35%]"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-      </section>
     </>
   );
 }
