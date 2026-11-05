@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Build to plain HTML/CSS/JS in `out/` so the site can be hosted on
-  // AWS Amplify Hosting (or S3 + CloudFront) with no server.
+  // Build to plain HTML/CSS/JS in `out/`, served by Hostinger (see hostinger/).
   output: "export",
   // Emit `/about/index.html` instead of `/about.html` so static hosts
   // resolve clean URLs without rewrite rules.

@@ -33,13 +33,9 @@ jobs:
 
       - name: Build static site
         run: npm run build
-        env:
-          NEXT_PUBLIC_LEAD_ENDPOINT: /api/lead.php
 
       - name: Add Hostinger server files
-        run: |
-          cp -r hostinger/public/. out/
-          rm -f out/_redirects out/__forms.html
+        run: cp -r hostinger/public/. out/
 
       - name: Publish to the hostinger branch
         uses: peaceiris/actions-gh-pages@v4

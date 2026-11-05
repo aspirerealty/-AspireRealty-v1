@@ -1,6 +1,6 @@
 # Aspire Ventures Realty — website
 
-Static marketing website built with **Next.js 16**, **Tailwind CSS 4** and **Motion**, exported to plain HTML and hosted on **AWS Amplify Hosting**. There is no database: content lives in `src/data/`, and enquiry forms are emailed to the sales inbox by a small AWS Lambda function.
+Static marketing website built with **Next.js 16**, **Tailwind CSS 4** and **Motion**, exported to plain HTML and hosted on **Hostinger** at https://aspireventuresrealty.in. Content lives in `src/data/`. Enquiry forms go to a small PHP handler that saves each lead to MySQL, emails it and copies it to a Google Sheet; the team views leads at `/leads/`.
 
 ## Run locally
 
@@ -33,33 +33,14 @@ Search the code for `TODO` to find every placeholder that still needs real infor
 
 All motion is switched off automatically for visitors who enable "reduce motion" on their device.
 
-## Hosting on Netlify (current)
+## Hosting (Hostinger)
 
-1. [app.netlify.com](https://app.netlify.com) → **Add new project** → **Import an existing project** → GitHub → `aspirerealty/-AspireRealty-v1`.
-2. Netlify reads `netlify.toml` (build `npm run build`, publish `out`) — just click **Deploy**.
-3. **Forms:** Project configuration → **Forms** → enable form detection, then redeploy once. Leads from every form on the site arrive in the `enquiry` form.
-   - Add an email notification (Forms → Form notifications → Email) so each lead lands in your inbox.
-   - The free plan includes 100 form submissions per month.
-4. **Domain:** Domain management → add your custom domain (HTTPS is automatic).
+Every push to `main` goes live automatically:
 
-Every push to `main` redeploys the site automatically.
+1. GitHub Actions (`.github/workflows/hostinger.yml`) builds the site and adds the server files from `hostinger/public/`.
+2. The result is pushed to the `hostinger` branch.
+3. Hostinger (hPanel → Advanced → GIT, connected to GitHub) deploys that branch into `public_html`.
 
-## Deploying to AWS (later)
+Setup details, the private `lead-config.php` settings file and the Google Sheet script are in [`hostinger/README.md`](hostinger/README.md).
 
-### 1. Website (Amplify Hosting)
-
-1. Push this folder to a GitHub repository.
-2. AWS Console → **Amplify** → **Create new app** → connect the repository. The included `amplify.yml` builds the site and publishes `out/`.
-3. **Hosting → Custom domains** → add your domain (Amplify issues the SSL certificate).
-4. **Hosting → Rewrites and redirects** → add `/<*>` → `/404.html` with type **404 (Rewrite)** so unknown URLs show the custom 404 page.
-
-### 2. Enquiry forms (Lambda + SES)
-
-1. **SES** → verify your domain (or the sender address) and request production access so it can send to any inbox.
-2. **Lambda** → create a function (Node.js 22.x) and paste `aws/lead-form-lambda/index.mjs`.
-   - Environment variables: `LEAD_TO_EMAIL`, `LEAD_FROM_EMAIL`.
-   - Give its role permission for `ses:SendEmail`.
-3. **Function URL** → enable with auth type `NONE`, and configure CORS: allowed origin = your website URL, allowed methods = `POST`, allowed headers = `content-type`.
-4. In Amplify → **Environment variables**, set `NEXT_PUBLIC_LEAD_ENDPOINT` to the Function URL, then redeploy.
-
-Building on Windows: `scripts/fix-export-segments.mjs` runs after `next build` to work around a Next.js Windows path bug in prefetch files. It does nothing on Linux (Amplify).
+Building on Windows: `scripts/fix-export-segments.mjs` runs after `next build` to work around a Next.js Windows path bug in prefetch files. It does nothing on Linux.

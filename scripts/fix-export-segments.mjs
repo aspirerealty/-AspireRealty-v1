@@ -2,7 +2,7 @@
 // should be written as `__next.about.__PAGE__.txt`, but Windows path
 // separators make Next write `__next.about\__PAGE__.txt` (a folder) instead,
 // so client-side prefetches 404. This flattens them. No-op on Linux/macOS
-// (e.g. AWS Amplify builds).
+// (e.g. the GitHub Actions build for Hostinger).
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
