@@ -12,6 +12,7 @@ What gets deployed on top of the normal site:
 | `public/api/lead.php` | Receives every website form → saves to MySQL → emails the lead |
 | `public/leads/` | Password-protected leads list + Excel download (`/leads/`) |
 | `lead-config.sample.php` | Template for the private settings file (NOT deployed) |
+| `google-sheet-apps-script.gs` | Script pasted into the Google Sheet so leads are copied there too |
 
 ## One-time setup in hPanel
 
@@ -31,6 +32,22 @@ What gets deployed on top of the normal site:
    - Click **Deploy**, then **Auto deployment** → copy the webhook URL.
 8. **Webhook**: GitHub repo → Settings → Secrets and variables → Actions →
    New secret `HOSTINGER_WEBHOOK` = the URL from step 7. From now on every update goes live by itself.
+
+## Google Sheet copy of every lead
+
+Sheet: https://docs.google.com/spreadsheets/d/10f5ZGzRj2Blcc0_0tiD4wVpArV1ydhlnDoPxu_5wqSU
+
+1. Sheet → **Share → General access → Restricted** (it holds customer phone numbers).
+2. **Extensions → Apps Script** → delete the sample code → paste `google-sheet-apps-script.gs`
+   → set `SECRET` to a long random phrase → **Save**.
+3. **Deploy → New deployment** → type **Web app** → Execute as **Me** →
+   Who has access **Anyone** → **Deploy** → allow access with the Google account.
+4. Copy the **Web app URL** into `lead-config.php` as `sheet_url`, and the same
+   phrase as `sheet_secret`.
+
+Each lead is then saved in MySQL, emailed, and added as a new row in the sheet
+(headings are created automatically). If you later edit the script, use
+**Deploy → Manage deployments → Edit → New version** so the URL stays the same.
 
 ## Check after going live
 

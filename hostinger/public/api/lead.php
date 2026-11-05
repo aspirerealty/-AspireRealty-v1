@@ -120,7 +120,45 @@ if (!empty($config['notify_to'])) {
     if (!$mailed) error_log('[avr] lead email failed for ' . $lead['phone']);
 }
 
+// Copy to the Google Sheet (via the Apps Script web app in
+// hostinger/google-sheet-apps-script.gs). Returns true when the sheet accepted it.
+function send_to_sheet(array $config, array $lead, string $now): bool
+{
+    if (empty($config['sheet_url']) || !function_exists('curl_init')) return false;
+    $ch = curl_init($config['sheet_url']);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($lead + ['time' => $now, 'secret' => $config['sheet_secret'] ?? '']),
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true, // Apps Script answers via a redirect
+        CURLOPT_TIMEOUT => 20,
+    ]);
+    $body = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    $ok = $status === 200 && is_string($body) && str_contains($body, '"ok":true');
+    if (!$ok) error_log('[avr] Google Sheet copy failed (' . $status . '): ' . substr((string) $body, 0, 200));
+    return $ok;
+}
+
 if (!$saved && !$mailed) {
+    // Last resort: if the sheet takes it, the lead is still safe.
+    if (send_to_sheet($config, $lead, $now)) respond(200, ['ok' => true]);
     respond(500, ['ok' => false, 'error' => 'Something went wrong. Please call or WhatsApp us.']);
 }
-respond(200, ['ok' => true]);
+
+// Answer the visitor straight away, then copy to the sheet in the background
+// so the form never waits on Google.
+ignore_user_abort(true);
+$reply = json_encode(['ok' => true]);
+http_response_code(200);
+if (function_exists('apache_setenv')) @apache_setenv('no-gzip', '1');
+header('Content-Encoding: none');
+header('Content-Length: ' . strlen($reply));
+header('Connection: close');
+echo $reply;
+if (function_exists('litespeed_finish_request')) litespeed_finish_request(); // Hostinger
+elseif (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
+else { while (ob_get_level() > 0) ob_end_flush(); flush(); }
+send_to_sheet($config, $lead, $now);

@@ -15,6 +15,11 @@ return [
     // Must be a mailbox on this domain (hPanel → Emails)
     'mail_from' => 'info@aspireventuresrealty.in',
 
+    // Google Sheet copy (optional): the Apps Script "Web app" URL and the
+    // same SECRET written in hostinger/google-sheet-apps-script.gs
+    'sheet_url' => 'https://script.google.com/macros/s/XXXXXXXX/exec',
+    'sheet_secret' => 'SAME-SECRET-AS-IN-THE-APPS-SCRIPT',
+
     // Password for https://aspireventuresrealty.in/leads/
     'admin_password' => 'CHOOSE-A-STRONG-PASSWORD',
 ];
