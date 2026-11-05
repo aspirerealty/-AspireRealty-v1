@@ -19,10 +19,13 @@ export const site = {
   },
   hours: "Mon – Sun, 10:00 AM – 7:00 PM",
   rera: "RERA registration details will appear here.", // TODO
-  // Add linkedin / youtube here (and an icon in SocialIcons.tsx) when those pages exist.
+  // Shown in this order wherever the social row appears. Add youtube /
+  // linkedin / x links here when those pages exist (icons are ready).
   social: {
     instagram: "https://www.instagram.com/aspire_ventures_realty",
     facebook: "https://www.facebook.com/share/1DSX7XY6Hb/",
+    whatsapp: "https://wa.me/919743915259",
+    email: "mailto:aspirerealty001@gmail.com",
   } as Record<string, string>,
   logo: {
     full: "/assets/logos/aspire-ventures-realty-logo-transparent.svg",
