@@ -41,6 +41,21 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['password'])) 
 }
 
 $loggedIn = !empty($_SESSION['ok']);
+if ($loggedIn && empty($_SESSION['csrf'])) $_SESSION['csrf'] = bin2hex(random_bytes(16));
+
+// Delete one enquiry (button on each row). Removes it from this database only;
+// the Google Sheet copy and the email are not affected.
+if ($loggedIn && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && ($_POST['action'] ?? '') === 'delete') {
+    if (hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? '')) && ctype_digit((string) ($_POST['id'] ?? ''))) {
+        avr_db()->prepare('DELETE FROM leads WHERE id = ?')->execute([(int) $_POST['id']]);
+        $_SESSION['flash'] = 'Enquiry deleted.';
+    }
+    $back = trim((string) ($_POST['q'] ?? ''));
+    header('Location: ./' . ($back !== '' ? '?q=' . rawurlencode($back) : ''));
+    exit;
+}
+$flash = $_SESSION['flash'] ?? '';
+unset($_SESSION['flash']);
 $columns = [
     'created_at' => 'Date & time', 'name' => 'Name', 'phone' => 'Mobile', 'email' => 'Email',
     'project' => 'Project', 'reason' => 'Reason', 'message' => 'Message', 'source' => 'Form', 'page' => 'Page',
@@ -107,6 +122,9 @@ if ($loggedIn) {
   .login input { width: 100%; margin: 16px 0; }
   .login button { width: 100%; }
   .err { color: #b42318; }
+  button.del { background: transparent; color: #8a94a3; padding: 6px; line-height: 0; border: 1px solid transparent; }
+  button.del:hover { color: #b42318; border-color: #f1c6c2; background: #fdf1f0; }
+  .flash { background: #e8f5ee; color: #1d6b43; padding: 10px 14px; margin: 0 0 16px; border: 1px solid #bfe3cf; }
 </style>
 </head>
 <body>
@@ -127,16 +145,17 @@ if ($loggedIn) {
     </div>
   </header>
   <main>
+    <?php if ($flash): ?><p class="flash"><?= h($flash) ?></p><?php endif; ?>
     <div class="bar">
       <p class="muted" style="margin:0"><?= number_format($total) ?> enquiries in total<?= $q !== '' ? ' · ' . count($leads) . ' matching “' . h($q) . '”' : ($total > 500 ? ' · showing latest 500' : '') ?></p>
       <form method="get"><input type="search" name="q" value="<?= h($q) ?>" placeholder="Search name, mobile, email, project"></form>
     </div>
     <div class="wrap">
       <table>
-        <thead><tr><?php foreach ($columns as $label): ?><th><?= h($label) ?></th><?php endforeach; ?></tr></thead>
+        <thead><tr><?php foreach ($columns as $label): ?><th><?= h($label) ?></th><?php endforeach; ?><th></th></tr></thead>
         <tbody>
         <?php if (!$leads): ?>
-          <tr><td colspan="<?= count($columns) ?>" class="muted">No enquiries yet.</td></tr>
+          <tr><td colspan="<?= count($columns) + 1 ?>" class="muted">No enquiries yet.</td></tr>
         <?php endif; ?>
         <?php foreach ($leads as $l): ?>
           <tr>
@@ -149,6 +168,17 @@ if ($loggedIn) {
             <td class="msg"><?= h($l['message']) ?></td>
             <td><?= h($l['source']) ?></td>
             <td class="muted"><?= h($l['page']) ?></td>
+            <td>
+              <form method="post" onsubmit="return confirm('Delete the enquiry from <?= h(addslashes($l['name'])) ?>? This cannot be undone.');">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="id" value="<?= (int) $l['id'] ?>">
+                <input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
+                <input type="hidden" name="q" value="<?= h($q) ?>">
+                <button type="submit" class="del" title="Delete this enquiry" aria-label="Delete enquiry from <?= h($l['name']) ?>">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>
+                </button>
+              </form>
+            </td>
           </tr>
         <?php endforeach; ?>
         </tbody>
