@@ -11,7 +11,7 @@ export const site = {
   phone: "+91 97439 15259", // TODO: confirm the calling number (currently the WhatsApp ad number)
   phoneHref: "tel:+919743915259",
   whatsapp: "919743915259", // international format, digits only
-  email: "aspirerealty001@gmail.com",
+  email: "info@aspireventuresrealty.in",
   address: {
     line1: "Hongasandra",
     line2: "Bengaluru, Karnataka 560068",
@@ -25,7 +25,7 @@ export const site = {
     instagram: "https://www.instagram.com/aspire_ventures_realty",
     facebook: "https://www.facebook.com/share/1DSX7XY6Hb/",
     whatsapp: "https://wa.me/919743915259",
-    email: "mailto:aspirerealty001@gmail.com",
+    email: "mailto:info@aspireventuresrealty.in",
   } as Record<string, string>,
   logo: {
     full: "/assets/logos/aspire-ventures-realty-logo-transparent.svg",

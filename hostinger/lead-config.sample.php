@@ -11,7 +11,7 @@ return [
     'db_pass' => 'DATABASE-PASSWORD-HERE',
 
     // Where new-enquiry alerts are sent (comma-separate several addresses)
-    'notify_to' => 'aspirerealty001@gmail.com',
+    'notify_to' => 'aspirerealty001@gmail.com, info@aspireventuresrealty.in',
     // Must be a mailbox on this domain (hPanel → Emails)
     'mail_from' => 'info@aspireventuresrealty.in',
 
