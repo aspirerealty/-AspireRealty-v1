@@ -1,0 +1,31 @@
+2:"$Sreact.fragment"
+3:"/_next/static/chunks/1ey08g0gk6vq-.js"
+4:"/_next/static/chunks/11y2576q5j7xg.js"
+5:"/_next/static/chunks/3ipfwcl3akkh1.js"
+6:"/_next/static/chunks/409oqdg0hsdb5.js"
+7:"/_next/static/chunks/2psg-u5dml94t.js"
+8:I[39756,["$3","$4","$5","$6","$7"],"default"]
+9:I[37457,["$3","$4","$5","$6","$7"],"default"]
+e:"/_next/static/chunks/07rxyxkw717bp.js"
+f:I[77938,["$3","$4","$5","$6","$7","$e"],"default"]
+10:I[97367,["$3","$4","$5","$6","$7"],"OutletBoundary"]
+11:"$Sreact.suspense"
+14:"ViewportBoundary"
+15:I[97367,["$3","$4","$5","$6","$7"],"$14"]
+16:"MetadataBoundary"
+17:I[97367,["$3","$4","$5","$6","$7"],"$16"]
+18:I[27201,["$3","$4","$5","$6","$7"],"IconMark"]
+b:X
+b:C
+c:X
+d:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$2","c",{"children":[[["$","$Lf",null,{"eyebrow":"Legal","title":"RERA Disclaimer","image":"/assets/images/office.jpg","crumbs":[{"href":"/","label":"Home"},{"label":"RERA Disclaimer"}]}],["$","section",null,{"className":"py-20 sm:py-28","children":["$","div",null,{"className":"mx-auto max-w-3xl px-5 sm:px-8","children":[["$","p",null,{"className":"text-sm text-muted","children":["Last updated: ","30 October 2026"]}],["$","div",null,{"className":"mt-10 space-y-10","children":[["$","div","Registration",{"children":[["$","h2",null,{"className":"font-display text-3xl text-navy-900","children":"Registration"}],["$","div",null,{"className":"mt-4 space-y-4 leading-relaxed text-muted","children":[["$","p","RERA registration details will appear here.",{"children":"RERA registration details will appear here."}],["$","p","Projects marked “RERA: Coming soon” are pre-launch. Bookings, where applicable, will be accepted only in accordance with the Real Estate (Regulation and Development) Act, 2016 and the Karnataka RERA rules.",{"children":"Projects marked “RERA: Coming soon” are pre-launch. Bookings, where applicable, will be accepted only in accordance with the Real Estate (Regulation and Development) Act, 2016 and the Karnataka RERA rules."}]]}]]}],["$","div","Marketing",{"children":[["$","h2",null,{"className":"font-display text-3xl text-navy-900","children":"Marketing"}],["$","div",null,{"className":"mt-4 space-y-4 leading-relaxed text-muted","children":[["$","p","Aspire Ventures Realty markets projects in collaboration with their respective developers. Project RERA numbers will be displayed on each project page once registered. Buyers can verify registration on the Karnataka RERA website (rera.karnataka.gov.in).",{"children":"Aspire Ventures Realty markets projects in collaboration with their respective developers. Project RERA numbers will be displayed on each project page once registered. Buyers can verify registration on the Karnataka RERA website (rera.karnataka.gov.in)."}]]}]]}],["$","div","Accuracy",{"children":[["$","h2",null,{"className":"font-display text-3xl text-navy-900","children":"Accuracy"}],["$","div",null,{"className":"mt-4 space-y-4 leading-relaxed text-muted","children":[["$","p","While we make every effort to keep information accurate, prices, offers and specifications may change. Images are artistic impressions and furniture, fixtures and landscaping shown are not part of the standard offering unless specified in the agreement.",{"children":"While we make every effort to keep information accurate, prices, offers and specifications may change. Images are artistic impressions and furniture, fixtures and landscaping shown are not part of the standard offering unless specified in the agreement."}]]}]]}]]}]]}]}]],[["$","script","script-0",{"src":"/_next/static/chunks/07rxyxkw717bp.js","async":true}]],["$","$L10",null,{"children":["$","$11",null,{"name":"Next.MetadataOutlet","children":"$@12"}]}]]}],"p":"$@13","v":null,"s":"$c"}}]]
+1:[["children",{"s":"disclaimer","h":64,"d":{"r":["$","$2","c",{"children":[null,["$","$L8",null,{"parallelRouterKey":"children","template":["$","$L9",null,{}]}]]}],"p":"$@a","v":"$b","s":"$c"},"c":"$Qd"}]]
+0:{"t":{"t":{"s":"","h":20,"c":"$Q1"},"h":{"r":["$","$2","h",{"children":[null,["$","$L15",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#092c4c"}]]}],["$","$L17",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$11",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"RERA Disclaimer | Aspire Ventures Realty"}],["$","meta","1",{"name":"description","content":"Aspire Ventures Realty partners with trusted developers to bring thoughtfully designed homes across Bengaluru — from launch to handover, with you at every step."}],["$","meta","2",{"property":"og:title","content":"RERA Disclaimer | Aspire Ventures Realty"}],["$","meta","3",{"property":"og:description","content":"Aspire Ventures Realty partners with trusted developers to bring thoughtfully designed homes across Bengaluru — from launch to handover, with you at every step."}],["$","meta","4",{"property":"og:site_name","content":"Aspire Ventures Realty"}],["$","meta","5",{"property":"og:image","content":"https://aspireventuresrealty.in/assets/images/sarjapura-poster-2.jpg"}],["$","meta","6",{"property":"og:type","content":"website"}],["$","meta","7",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","8",{"name":"twitter:title","content":"RERA Disclaimer | Aspire Ventures Realty"}],["$","meta","9",{"name":"twitter:description","content":"Aspire Ventures Realty partners with trusted developers to bring thoughtfully designed homes across Bengaluru — from launch to handover, with you at every step."}],["$","meta","10",{"name":"twitter:image","content":"https://aspireventuresrealty.in/assets/images/sarjapura-poster-2.jpg"}],["$","link","11",{"rel":"icon","href":"/icon.svg?icon.1vk13iwx_4a8x.svg","sizes":"any","type":"image/svg+xml"}],["$","$L18","12",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@19","v":null,"s":"$c"}},"a":"$@1a","u":"$@1b","b":"hpw3DvJC6_6KFXZF_8hiJ"}
+12:null
+1b:true
+c:300
+c:C
+1a:0
+a:"$undefined"
+19:"$undefined"
+13:"$undefined"
