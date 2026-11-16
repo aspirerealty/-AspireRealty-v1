@@ -31,8 +31,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: site.name,
-    images: ["/assets/images/sarjapura-poster-2.jpg"],
+    images: [{ url: "/assets/share/aspire-share.jpg", width: 1200, height: 1200, alt: site.name }],
   },
+  twitter: { card: "summary_large_image", images: ["/assets/share/aspire-share.jpg"] },
 };
 
 export const viewport: Viewport = {
