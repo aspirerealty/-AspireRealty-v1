@@ -1,0 +1,4 @@
+# Next.js build files have a unique name per version, so browsers may keep them forever.
+<IfModule mod_headers.c>
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</IfModule>
